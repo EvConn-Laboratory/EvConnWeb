@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { NetworkBackground } from "@/components/NetworkBackground";
 
 export const metadata: Metadata = {
@@ -9,22 +10,6 @@ export const metadata: Metadata = {
   },
 };
 
-function HexLogo() {
-  return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-      <path
-        d="M16 2 L30 9.5 L30 22.5 L16 30 L2 22.5 L2 9.5 Z"
-        fill="var(--evconn-teal)"
-      />
-      <path
-        d="M16 9 L23 13 L23 21 L16 25 L9 21 L9 13 Z"
-        fill="none"
-        stroke="rgba(0,0,0,0.18)"
-        strokeWidth="1.5"
-      />
-    </svg>
-  );
-}
 
 export default function AuthLayout({
   children,
@@ -45,7 +30,7 @@ export default function AuthLayout({
         href="/"
         className="relative z-10 mb-8 flex items-center gap-2.5 transition-opacity hover:opacity-75"
       >
-        <HexLogo />
+        <Image src="/evconn.png" alt="EvConn Laboratory" width={36} height={36} className="rounded-sm" />
         <span className="text-lg font-semibold tracking-tight text-foreground">
           EvConn <span className="text-primary">Lab</span>
         </span>

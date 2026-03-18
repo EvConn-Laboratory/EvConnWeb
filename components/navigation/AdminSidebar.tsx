@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -15,7 +16,6 @@ import {
   ShieldCheck,
   Trophy,
   FileText,
-  Image,
   Newspaper,
   Star,
 } from "lucide-react";
@@ -144,17 +144,7 @@ export function AdminSidebar() {
     <aside className="flex h-screen w-56 shrink-0 flex-col border-r border-border bg-sidebar">
       {/* Logo */}
       <div className="flex h-14 shrink-0 items-center gap-2.5 border-b border-border px-4">
-        <div
-          className="flex h-6 w-6 shrink-0 items-center justify-center bg-primary"
-          style={{
-            clipPath:
-              "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-          }}
-        >
-          <span className="text-[9px] font-bold text-primary-foreground">
-            EC
-          </span>
-        </div>
+        <Image src="/evconn.png" alt="EvConn Laboratory" width={26} height={26} className="rounded-sm shrink-0" />
         <div className="flex flex-col leading-none">
           <span className="text-sm font-semibold tracking-tight text-foreground">
             EvConn <span className="text-primary">Lab</span>

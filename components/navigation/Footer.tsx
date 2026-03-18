@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Github, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 
 const footerLinks = {
@@ -32,18 +33,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="inline-flex items-center gap-2.5">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                  d="M12 1 L23 6.5 L23 17.5 L12 23 L1 17.5 L1 6.5 Z"
-                  fill="var(--evconn-teal)"
-                />
-                <path
-                  d="M12 6.5 L17.5 9.5 L17.5 15.5 L12 18.5 L6.5 15.5 L6.5 9.5 Z"
-                  fill="none"
-                  stroke="rgba(0,0,0,0.2)"
-                  strokeWidth="1"
-                />
-              </svg>
+              <Image src="/evconn.png" alt="EvConn Laboratory" width={26} height={26} className="rounded-sm" />
               <span className="text-sm font-semibold tracking-tight text-foreground">
                 EvConn <span className="text-primary">Lab</span>
               </span>

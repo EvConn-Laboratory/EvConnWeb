@@ -1,5 +1,7 @@
 import { sql } from "drizzle-orm";
 import { db } from "@/lib/db";
+
+export const revalidate = 300; // revalidate every 5 minutes
 import {
   enrollments,
   courseOfferings,
@@ -17,16 +19,20 @@ export default async function LandingPage() {
         .select({
           count: sql<number>`cast(count(distinct ${enrollments.studentId}) as integer)`,
         })
-        .from(enrollments),
+        .from(enrollments)
+        .catch(() => [{ count: 0 }]),
       db
         .select({ count: sql<number>`cast(count(*) as integer)` })
         .from(courseOfferings)
-        .where(sql`${courseOfferings.status} = 'active'`),
-      db.select({ count: sql<number>`cast(count(*) as integer)` }).from(generations),
+        .where(sql`${courseOfferings.status} = 'active'`)
+        .catch(() => [{ count: 0 }]),
+      db.select({ count: sql<number>`cast(count(*) as integer)` }).from(generations)
+        .catch(() => [{ count: 0 }]),
       db
         .select({ count: sql<number>`cast(count(*) as integer)` })
         .from(assistantProfiles)
-        .where(sql`${assistantProfiles.status} = 'active'`),
+        .where(sql`${assistantProfiles.status} = 'active'`)
+        .catch(() => [{ count: 0 }]),
       getPublishedProgramsAction(),
       getPublishedNewsAction(3),
       getHallOfFameAction(),

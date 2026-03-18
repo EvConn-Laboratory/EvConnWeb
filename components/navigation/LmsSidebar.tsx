@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -102,22 +103,6 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
-function HexIcon({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn(
-        "flex h-6 w-6 shrink-0 items-center justify-center bg-primary",
-        className,
-      )}
-      style={{
-        clipPath:
-          "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-      }}
-    >
-      <span className="text-[10px] font-bold text-primary-foreground">EC</span>
-    </div>
-  );
-}
 
 interface LmsSidebarProps {
   role: Role;
@@ -150,13 +135,17 @@ export function LmsSidebar({ role, userName }: LmsSidebarProps) {
       >
         {!collapsed && (
           <Link href="/lms/dashboard" className="flex items-center gap-2">
-            <HexIcon />
+            <Image src="/evconn.png" alt="EvConn Laboratory" width={24} height={24} className="rounded-sm shrink-0" />
             <span className="text-sm font-semibold text-sidebar-foreground">
               EvConn <span className="text-primary">Lab</span>
             </span>
           </Link>
         )}
-        {collapsed && <HexIcon />}
+        {collapsed && (
+          <Link href="/lms/dashboard">
+            <Image src="/evconn.png" alt="EvConn Laboratory" width={24} height={24} className="rounded-sm" />
+          </Link>
+        )}
         <button
           onClick={() => setCollapsed((c) => !c)}
           className={cn(

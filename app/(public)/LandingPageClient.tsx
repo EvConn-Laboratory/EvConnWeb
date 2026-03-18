@@ -249,10 +249,11 @@ export default function LandingPageClient({
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.08 }}
+                      className="h-full"
                     >
                       <Link
                         href="/programs"
-                        className="group flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
+                        className="group flex h-full flex-col gap-4 rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
                       >
                         <div className="flex items-center justify-between">
                           <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl", palette.bg)}>
@@ -262,15 +263,15 @@ export default function LandingPageClient({
                             {programCode(prog.title)}
                           </span>
                         </div>
-                        <div>
+                        <div className="flex-1">
                           <p className="text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
                             {prog.title}
                           </p>
-                          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground line-clamp-3">
+                          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground line-clamp-4">
                             {prog.description}
                           </p>
                         </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground/40 transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+                        <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/40 transition-transform group-hover:translate-x-1 group-hover:text-primary" />
                       </Link>
                     </motion.div>
                   );
