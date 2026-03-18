@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: evconn_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: evconn
+      POSTGRES_PASSWORD: evconn_secret
+      POSTGRES_DB: evconn
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  storage:
+    image: alpine:3.19
+    container_name: evconn_storage
+    volumes:
+      - file_storage:/storage
+    command: sh -c "mkdir -p /storage/submissions /storage/cms/programs /storage/cms/news /storage/cms/assistants /storage/cms/gallery && tail -f /dev/null"
+
+volumes:
+  postgres_data:
+  file_storage:
