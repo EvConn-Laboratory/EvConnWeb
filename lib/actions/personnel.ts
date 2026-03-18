@@ -552,6 +552,7 @@ export async function getRolesForAssistantAction(assistantId: string) {
  * sorted newest-first with role hierarchy per the PRD §14.4.
  */
 export async function getHallOfFameAction() {
+  try {
   const allGenerations = await db
     .select()
     .from(generations)
@@ -611,4 +612,7 @@ export async function getHallOfFameAction() {
 
     return { generation: gen, members };
   });
+  } catch {
+    return [];
+  }
 }

@@ -11,7 +11,7 @@ import postgres from "postgres";
 
 const connectionString =
   process.env.DATABASE_URL ??
-  "postgresql://evconn:evconn_secret@localhost:5432/evconn";
+  "postgresql://neondb_owner:npg_cHE4AyibU9WZ@ep-proud-mode-anl0t6d0-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
 
 const sql = postgres(connectionString, { max: 1 });
 

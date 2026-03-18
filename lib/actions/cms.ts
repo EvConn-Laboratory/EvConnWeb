@@ -220,11 +220,15 @@ export async function toggleProgramPublishedAction(
 }
 
 export async function getPublishedProgramsAction() {
-  return db
-    .select()
-    .from(programs)
-    .where(eq(programs.isPublished, true))
-    .orderBy(asc(programs.sortOrder));
+  try {
+    return await db
+      .select()
+      .from(programs)
+      .where(eq(programs.isPublished, true))
+      .orderBy(asc(programs.sortOrder));
+  } catch {
+    return [];
+  }
 }
 
 export async function getAllProgramsAction() {
@@ -441,31 +445,39 @@ export async function deleteNewsArticleAction(id: string): Promise<ActionResult>
 }
 
 export async function getPublishedNewsAction(limit = 20, offset = 0) {
-  return db
-    .select()
-    .from(newsArticles)
-    .where(eq(newsArticles.status, "published"))
-    .orderBy(desc(newsArticles.publishedAt))
-    .limit(limit)
-    .offset(offset);
+  try {
+    return await db
+      .select()
+      .from(newsArticles)
+      .where(eq(newsArticles.status, "published"))
+      .orderBy(desc(newsArticles.publishedAt))
+      .limit(limit)
+      .offset(offset);
+  } catch {
+    return [];
+  }
 }
 
 export async function getNewsArticleBySlugAction(slug: string) {
-  const [article] = await db
-    .select()
-    .from(newsArticles)
-    .where(and(eq(newsArticles.slug, slug), eq(newsArticles.status, "published")))
-    .limit(1);
+  try {
+    const [article] = await db
+      .select()
+      .from(newsArticles)
+      .where(and(eq(newsArticles.slug, slug), eq(newsArticles.status, "published")))
+      .limit(1);
 
-  if (!article) return null;
+    if (!article) return null;
 
-  const images = await db
-    .select()
-    .from(newsImages)
-    .where(eq(newsImages.newsId, article.id))
-    .orderBy(asc(newsImages.orderIndex));
+    const images = await db
+      .select()
+      .from(newsImages)
+      .where(eq(newsImages.newsId, article.id))
+      .orderBy(asc(newsImages.orderIndex));
 
-  return { article, images };
+    return { article, images };
+  } catch {
+    return null;
+  }
 }
 
 export async function getAllNewsAction() {
@@ -616,11 +628,15 @@ export async function reorderGalleryAction(orderedIds: string[]): Promise<Action
 }
 
 export async function getPublishedGalleryAction() {
-  return db
-    .select()
-    .from(galleryItems)
-    .where(eq(galleryItems.isPublished, true))
-    .orderBy(asc(galleryItems.sortOrder));
+  try {
+    return await db
+      .select()
+      .from(galleryItems)
+      .where(eq(galleryItems.isPublished, true))
+      .orderBy(asc(galleryItems.sortOrder));
+  } catch {
+    return [];
+  }
 }
 
 export async function getAllGalleryItemsAction() {
@@ -696,13 +712,17 @@ export async function getCmsPageBySlugAction(slug: string) {
 }
 
 export async function getPublishedCmsPageBySlugAction(slug: string) {
-  const [page] = await db
-    .select()
-    .from(cmsPages)
-    .where(and(eq(cmsPages.slug, slug), eq(cmsPages.isPublished, true)))
-    .limit(1);
+  try {
+    const [page] = await db
+      .select()
+      .from(cmsPages)
+      .where(and(eq(cmsPages.slug, slug), eq(cmsPages.isPublished, true)))
+      .limit(1);
 
-  return page ?? null;
+    return page ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export async function getAllCmsPagesAction() {
