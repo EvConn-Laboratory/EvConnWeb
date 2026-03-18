@@ -1,7 +1,6 @@
 [build]
   command = "npm run build"
-  publish = ".output/public"
+  publish = ".next"
 
 [build.environment]
-  NITRO_PRESET = "netlify"
   NODE_VERSION = "20"
