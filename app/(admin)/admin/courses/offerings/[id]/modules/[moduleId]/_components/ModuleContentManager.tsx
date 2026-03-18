@@ -296,6 +296,8 @@ function FileUploadField({
 
 // ─── Add Content Item Form ────────────────────────────────────────────────────
 
+type AssignmentRef = Pick<AssignmentWithQuestions, "id" | "title" | "type" | "format">;
+
 function AddContentItemForm({
   moduleId,
   nextOrder,
@@ -304,7 +306,7 @@ function AddContentItemForm({
 }: {
   moduleId: string;
   nextOrder: number;
-  assignments: Assignment[];
+  assignments: AssignmentRef[];
   onCreated: (item: ContentItem) => void;
 }) {
   const [open, setOpen] = useState(false);
