@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { CourseOffering } from "@/lib/db/schema/courses";
 import { createModuleAction, updateModuleAction, deleteModuleAction } from "@/lib/actions/modules";
 import { assignAssistantToOfferingAction, removeAssistantFromOfferingAction } from "@/lib/actions/courses";
 
@@ -36,8 +37,8 @@ export interface OfferingTabsData {
     academicYear: string;
     hari: string | null;
     shift: string | null;
-    status: string;
-    visibility: string;
+    status: CourseOffering["status"];
+    visibility: CourseOffering["visibility"];
     enrollmentKey: string | null;
   };
   course: {
