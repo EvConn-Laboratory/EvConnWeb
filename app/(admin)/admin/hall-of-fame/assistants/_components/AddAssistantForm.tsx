@@ -12,7 +12,19 @@ interface Generation {
   name: string;
 }
 
-export function AddAssistantForm({ generations }: { generations: Generation[] }) {
+interface UserForLinking {
+  id: string;
+  name: string;
+  email: string | null;
+}
+
+export function AddAssistantForm({
+  generations,
+  usersForLinking,
+}: {
+  generations: Generation[];
+  usersForLinking: UserForLinking[];
+}) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -52,6 +64,26 @@ export function AddAssistantForm({ generations }: { generations: Generation[] })
               className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground"
               placeholder="Full name"
             />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-foreground">
+              Link to User Account <span className="text-muted-foreground">(optional)</span>
+            </label>
+            <select
+              name="userId"
+              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground"
+            >
+              <option value="">— No link —</option>
+              {usersForLinking.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.name} {u.email ? `(${u.email})` : ""}
+                </option>
+              ))}
+            </select>
+            <p className="text-[11px] text-muted-foreground">
+              Link to an existing user so they appear in Users and can be assigned to offerings.
+            </p>
           </div>
 
           <div className="space-y-1.5">

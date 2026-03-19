@@ -730,6 +730,13 @@ export async function getAllCmsPagesAction() {
   return db.select().from(cmsPages).orderBy(asc(cmsPages.slug));
 }
 
+export async function deleteCmsPageAction(id: string): Promise<ActionResult> {
+  await requireAdmin();
+  await db.delete(cmsPages).where(eq(cmsPages.id, id));
+  revalidatePath("/admin/cms/pages");
+  return { success: true };
+}
+
 export async function toggleCmsPagePublishedAction(
   id: string,
   isPublished: boolean,

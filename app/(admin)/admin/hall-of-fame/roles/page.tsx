@@ -8,6 +8,7 @@ import { getSession } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
 import { asc } from "drizzle-orm";
 import { AddRoleForm } from "./_components/AddRoleForm";
+import { EditRoleForm } from "./_components/EditRoleForm";
 
 export const metadata: Metadata = { title: "Roles | Hall of Fame | Admin" };
 
@@ -74,12 +75,13 @@ export default async function RolesPage() {
                 <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">Order</th>
                 <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">Role Name</th>
                 <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">Description</th>
+                <th className="whitespace-nowrap px-4 py-3 text-right text-xs font-medium text-muted-foreground">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {roles.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="px-4 py-12 text-center text-sm text-muted-foreground">
+                  <td colSpan={4} className="px-4 py-12 text-center text-sm text-muted-foreground">
                     No organizational roles yet.
                   </td>
                 </tr>
@@ -96,6 +98,9 @@ export default async function RolesPage() {
                       <span className="text-sm text-muted-foreground">
                         {role.description ?? <span className="italic text-muted-foreground/60">No description</span>}
                       </span>
+                    </td>
+                    <td className="px-4 py-3 text-right align-top">
+                      <EditRoleForm role={role} />
                     </td>
                   </tr>
                 ))

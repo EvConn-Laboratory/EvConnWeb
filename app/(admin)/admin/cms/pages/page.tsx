@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { FileText, Plus, ArrowUpRight } from "lucide-react";
+import { FileText, ArrowUpRight } from "lucide-react";
 import {
   getAllCmsPagesAction,
   toggleCmsPagePublishedAction,
@@ -9,6 +9,7 @@ import {
 import { getSession } from "@/lib/auth/session";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { AddCmsPageForm, EditCmsPageForm } from "./_components/CmsPageCrud";
 
 export const metadata: Metadata = { title: "Pages | CMS | Admin" };
 
@@ -57,10 +58,7 @@ export default async function AdminCmsPagesPage() {
           </p>
         </div>
 
-        <Button size="sm" className="gap-1.5" disabled>
-          <Plus className="h-3.5 w-3.5" />
-          Tambah Halaman
-        </Button>
+        <AddCmsPageForm />
       </div>
 
       {/* Table */}
@@ -173,6 +171,7 @@ export default async function AdminCmsPagesPage() {
                             {page.isPublished ? "Cabut" : "Terbitkan"}
                           </Button>
                         </form>
+                        <EditCmsPageForm page={page} />
                       </div>
                     </td>
                   </tr>

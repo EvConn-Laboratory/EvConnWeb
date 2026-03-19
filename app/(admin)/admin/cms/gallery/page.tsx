@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Image, Plus } from "lucide-react";
+import { Image } from "lucide-react";
 import { getAllGalleryItemsAction } from "@/lib/actions/cms";
 import { db } from "@/lib/db";
 import { galleryItems } from "@/lib/db/schema";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { AddGalleryItemForm, EditGalleryItemForm } from "./_components/GalleryCrud";
 
 export const metadata: Metadata = { title: "Gallery | CMS | Admin" };
 
@@ -67,10 +68,7 @@ export default async function AdminCmsGalleryPage() {
           </p>
         </div>
 
-        <Button size="sm" className="gap-1.5" disabled>
-          <Plus className="h-3.5 w-3.5" />
-          Tambah Item
-        </Button>
+        <AddGalleryItemForm />
       </div>
 
       {/* Table */}
@@ -155,9 +153,9 @@ export default async function AdminCmsGalleryPage() {
                       )}
                     </td>
 
-                    {/* Toggle action */}
+                    {/* Actions */}
                     <td className="px-4 py-3">
-                      <div className="flex items-center justify-end">
+                      <div className="flex items-center justify-end gap-2">
                         <form action={handleToggleGallery}>
                           <input type="hidden" name="id" value={item.id} />
                           <input
@@ -179,6 +177,7 @@ export default async function AdminCmsGalleryPage() {
                             {item.isPublished ? "Sembunyikan" : "Tampilkan"}
                           </Button>
                         </form>
+                        <EditGalleryItemForm item={item} />
                       </div>
                     </td>
                   </tr>

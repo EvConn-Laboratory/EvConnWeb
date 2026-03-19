@@ -21,7 +21,7 @@ const NAV_LINKS = [
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2.5">
-      <Image src="/evconn.png" alt="EvConn Laboratory" width={28} height={28} className="rounded-sm" />
+      <Image src="/evconn-light.png" alt="EvConn Laboratory" width={28} height={28} className="rounded-sm" />
       <span className="text-sm font-semibold tracking-tight text-foreground">
         EvConn <span className="text-primary">Lab</span>
       </span>

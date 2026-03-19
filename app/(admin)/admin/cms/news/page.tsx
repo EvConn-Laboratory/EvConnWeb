@@ -8,6 +8,7 @@ import { getSession } from "@/lib/auth/session";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { desc, eq } from "drizzle-orm";
+import { DeleteNewsButton } from "./_components/DeleteNewsButton";
 
 export const metadata: Metadata = { title: "News | CMS | Admin" };
 
@@ -191,6 +192,7 @@ export default async function AdminCmsNewsPage() {
                             Edit
                           </Link>
                         </Button>
+                        <DeleteNewsButton id={article.id} title={article.title} />
                       </div>
                     </td>
                   </tr>

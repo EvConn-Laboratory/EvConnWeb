@@ -15,12 +15,17 @@ import {
   Archive,
   Plus,
   AlertCircle,
+  Pencil,
+  Trash2,
+  UserPlus,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createModuleAction } from "@/lib/actions/modules";
+import { createModuleAction, updateModuleAction, deleteModuleAction } from "@/lib/actions/modules";
+import { assignAssistantToOfferingAction, removeAssistantFromOfferingAction } from "@/lib/actions/courses";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -72,6 +77,7 @@ export interface OfferingTabsData {
     assistantName: string;
     assistantEmail: string | null;
   }>;
+  availableAssistants: Array<{ id: string; name: string; email: string | null }>;
 }
 
 type TabId = "overview" | "students" | "modules" | "assistants";
@@ -546,6 +552,154 @@ function AddModuleForm({
   );
 }
 
+// ─── Edit Module inline form ──────────────────────────────────────────────────
+
+function EditModuleInline({
+  mod,
+  offeringId,
+  onUpdated,
+  onDeleted,
+}: {
+  mod: ModuleRow;
+  offeringId: string;
+  onUpdated: (updated: ModuleRow) => void;
+  onDeleted: (id: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState(mod.title);
+  const [description, setDescription] = useState(mod.description ?? "");
+  const [orderIndex, setOrderIndex] = useState(String(mod.orderIndex));
+  const [status, setStatus] = useState(mod.status);
+  const [openDatetime, setOpenDatetime] = useState(
+    mod.openDatetime ? new Date(mod.openDatetime).toISOString().slice(0, 16) : "",
+  );
+  const [closeDatetime, setCloseDatetime] = useState(
+    mod.closeDatetime ? new Date(mod.closeDatetime).toISOString().slice(0, 16) : "",
+  );
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const [isDeleting, startDelete] = useTransition();
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    const fd = new FormData();
+    fd.append("title", title.trim());
+    if (description.trim()) fd.append("description", description.trim());
+    fd.append("orderIndex", orderIndex);
+    fd.append("status", status);
+    if (openDatetime) fd.append("openDatetime", openDatetime);
+    if (closeDatetime) fd.append("closeDatetime", closeDatetime);
+
+    startTransition(async () => {
+      const res = await updateModuleAction(mod.id, null, fd);
+      if ("error" in res) { setError(res.error); return; }
+      onUpdated({
+        ...mod,
+        title: title.trim(),
+        description: description.trim() || null,
+        orderIndex: Number(orderIndex),
+        status,
+        openDatetime: openDatetime ? new Date(openDatetime) : null,
+        closeDatetime: closeDatetime ? new Date(closeDatetime) : null,
+      });
+      setOpen(false);
+    });
+  }
+
+  function handleDelete() {
+    if (!confirm(`Close module "${mod.title}"? It will be set to closed status.`)) return;
+    startDelete(async () => {
+      const res = await deleteModuleAction(mod.id);
+      if ("error" in res) { setError(res.error); return; }
+      onUpdated({ ...mod, status: "closed" });
+      setOpen(false);
+    });
+  }
+
+  if (!open) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+      >
+        <Pencil className="h-3 w-3" />
+        Edit
+      </button>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="w-full space-y-3 rounded-xl border border-border bg-muted/30 p-4 mt-3">
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-semibold text-foreground">Edit Module</p>
+        <button
+          type="button"
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-500/10 transition-colors disabled:opacity-50 dark:text-red-400"
+        >
+          <Trash2 className="h-3 w-3" />
+          {isDeleting ? "…" : "Delete"}
+        </button>
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="text-xs font-medium text-foreground">Title</label>
+        <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="text-xs font-medium text-foreground">Description</label>
+        <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Optional" />
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-foreground">Order</label>
+          <Input type="number" min={0} value={orderIndex} onChange={(e) => setOrderIndex(e.target.value)} />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-foreground">Status</label>
+          <select value={status} onChange={(e) => setStatus(e.target.value)} className={SELECT_CLASS}>
+            <option value="draft">Draft</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="open">Open</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-foreground">Opens At</label>
+          <Input type="datetime-local" value={openDatetime} onChange={(e) => setOpenDatetime(e.target.value)} />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-foreground">Closes At</label>
+          <Input type="datetime-local" value={closeDatetime} onChange={(e) => setCloseDatetime(e.target.value)} />
+        </div>
+      </div>
+
+      {error && (
+        <p className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+          {error}
+        </p>
+      )}
+
+      <div className="flex justify-end gap-2">
+        <button type="button" onClick={() => setOpen(false)} className="inline-flex h-8 items-center rounded-md border border-border px-3 text-xs font-medium text-muted-foreground hover:bg-muted">
+          Cancel
+        </button>
+        <button type="submit" disabled={isPending} className={cn("inline-flex h-8 items-center rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground", isPending && "opacity-60")}>
+          {isPending ? "Saving…" : "Save"}
+        </button>
+      </div>
+    </form>
+  );
+}
+
 // ─── Modules tab ──────────────────────────────────────────────────────────────
 
 function ModulesTab({
@@ -570,63 +724,57 @@ function ModulesTab({
       {modules.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-card px-6 py-12 text-center">
           <BookOpen className="mx-auto h-7 w-7 text-muted-foreground/40" />
-          <p className="mt-3 text-sm font-medium text-foreground">
-            No modules yet
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Add a module to this offering using the button above.
-          </p>
+          <p className="mt-3 text-sm font-medium text-foreground">No modules yet</p>
+          <p className="mt-1 text-xs text-muted-foreground">Add a module to this offering using the button above.</p>
         </div>
       ) : (
         modules.map((mod) => (
-          <div
-            key={mod.id}
-            className="flex items-center justify-between gap-4 rounded-xl border border-border bg-card px-5 py-4 transition-colors hover:bg-muted/20"
-          >
-            <div className="flex items-start gap-4 flex-1 min-w-0">
-              {/* Order number */}
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-xs font-bold text-muted-foreground">
-                {mod.orderIndex + 1}
+          <div key={mod.id} className="rounded-xl border border-border bg-card px-5 py-4 transition-colors hover:bg-muted/20">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-start gap-4 flex-1 min-w-0">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-xs font-bold text-muted-foreground">
+                  {mod.orderIndex + 1}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-medium text-foreground leading-snug">{mod.title}</p>
+                    <ModuleStatusBadge status={mod.status} />
+                  </div>
+                  {mod.description && (
+                    <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">{mod.description}</p>
+                  )}
+                  <div className="mt-1.5 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                    <ContentCount count={mod.contentCount} />
+                    {mod.openDatetime && (
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        Opens:{" "}
+                        {new Date(mod.openDatetime).toLocaleDateString("en-US", {
+                          day: "numeric",
+                          month: "short",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
 
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="font-medium text-foreground leading-snug">
-                    {mod.title}
-                  </p>
-                  <ModuleStatusBadge status={mod.status} />
-                </div>
-                {mod.description && (
-                  <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">
-                    {mod.description}
-                  </p>
-                )}
-                <div className="mt-1.5 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                  <ContentCount count={mod.contentCount} />
-                  {mod.openDatetime && (
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      Opens:{" "}
-                      {new Date(mod.openDatetime).toLocaleDateString("en-US", {
-                        day: "numeric",
-                        month: "short",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  )}
-                </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <EditModuleInline
+                  mod={mod}
+                  offeringId={offeringId}
+                  onUpdated={(updated) =>
+                    setModules((prev) => prev.map((m) => (m.id === updated.id ? updated : m)))
+                  }
+                  onDeleted={() => {}}
+                />
+                <Link href={`/admin/courses/offerings/${offeringId}/modules/${mod.id}`} className="shrink-0">
+                  <Button variant="outline" size="xs">Manage</Button>
+                </Link>
               </div>
             </div>
-
-            <Link
-              href={`/admin/courses/offerings/${offeringId}/modules/${mod.id}`}
-              className="shrink-0"
-            >
-              <Button variant="outline" size="xs">
-                Manage
-              </Button>
-            </Link>
           </div>
         ))
       )}
@@ -637,34 +785,115 @@ function ModulesTab({
 // ─── Assistants tab ───────────────────────────────────────────────────────────
 
 function AssistantsTab({
-  assistants,
+  assistants: initialAssistants,
+  availableAssistants,
+  offeringId,
 }: {
   assistants: OfferingTabsData["assistants"];
+  availableAssistants: OfferingTabsData["availableAssistants"];
+  offeringId: string;
 }) {
+  const [assistants, setAssistants] = useState(initialAssistants);
+  const [showAdd, setShowAdd] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState("");
+  const [isLead, setIsLead] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isAdding, startAdd] = useTransition();
+  const [removingId, setRemovingId] = useState<string | null>(null);
+
+  const assignedIds = new Set(assistants.map((a) => a.assistantId));
+  const unassigned = availableAssistants.filter((u) => !assignedIds.has(u.id));
+
+  function handleAssign(e: React.FormEvent) {
+    e.preventDefault();
+    if (!selectedUserId) return;
+    setError(null);
+    startAdd(async () => {
+      const res = await assignAssistantToOfferingAction(offeringId, selectedUserId, isLead);
+      if ("error" in res) { setError(res.error); return; }
+      const user = availableAssistants.find((u) => u.id === selectedUserId);
+      if (user) {
+        setAssistants((prev) => [
+          ...prev,
+          { id: crypto.randomUUID(), assistantId: user.id, isLead, assistantName: user.name, assistantEmail: user.email },
+        ]);
+      }
+      setSelectedUserId("");
+      setIsLead(false);
+      setShowAdd(false);
+    });
+  }
+
+  function handleRemove(assistantId: string) {
+    if (!confirm("Remove this assistant from the offering?")) return;
+    setRemovingId(assistantId);
+    const run = async () => {
+      const res = await removeAssistantFromOfferingAction(offeringId, assistantId);
+      if ("error" in res) { setError(res.error); setRemovingId(null); return; }
+      setAssistants((prev) => prev.filter((a) => a.assistantId !== assistantId));
+      setRemovingId(null);
+    };
+    run();
+  }
+
   return (
     <div className="space-y-3">
+      <div className="flex justify-end">
+        {!showAdd ? (
+          <Button size="sm" variant="outline" className="gap-1.5" onClick={() => setShowAdd(true)} disabled={unassigned.length === 0}>
+            <UserPlus className="h-3.5 w-3.5" />
+            Assign Assistant
+          </Button>
+        ) : (
+          <form onSubmit={handleAssign} className="flex items-end gap-2 rounded-xl border border-border bg-card p-3">
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-foreground">User</label>
+              <select
+                value={selectedUserId}
+                onChange={(e) => setSelectedUserId(e.target.value)}
+                required
+                className={cn(SELECT_CLASS, "w-48")}
+              >
+                <option value="">Select user…</option>
+                {unassigned.map((u) => (
+                  <option key={u.id} value={u.id}>{u.name}</option>
+                ))}
+              </select>
+            </div>
+            <label className="flex items-center gap-1.5 text-xs text-foreground pb-1">
+              <input type="checkbox" checked={isLead} onChange={(e) => setIsLead(e.target.checked)} className="rounded" />
+              Lead
+            </label>
+            <Button type="submit" size="sm" disabled={isAdding}>{isAdding ? "…" : "Assign"}</Button>
+            <button type="button" onClick={() => { setShowAdd(false); setError(null); }} className="pb-0.5">
+              <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+            </button>
+          </form>
+        )}
+      </div>
+
+      {error && (
+        <p className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+          {error}
+        </p>
+      )}
+
       {assistants.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-card px-6 py-12 text-center">
           <UserRound className="mx-auto h-7 w-7 text-muted-foreground/40" />
-          <p className="mt-3 text-sm font-medium text-foreground">
-            No assistants assigned
-          </p>
+          <p className="mt-3 text-sm font-medium text-foreground">No assistants assigned</p>
         </div>
       ) : (
         assistants.map((a) => (
-          <div
-            key={a.id}
-            className="flex items-center justify-between gap-4 rounded-xl border border-border bg-card px-5 py-4"
-          >
+          <div key={a.id} className="flex items-center justify-between gap-4 rounded-xl border border-border bg-card px-5 py-4">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground">
                 {a.assistantName.charAt(0).toUpperCase()}
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-foreground">
-                    {a.assistantName}
-                  </p>
+                  <p className="text-sm font-medium text-foreground">{a.assistantName}</p>
                   {a.isLead && (
                     <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-600 dark:text-amber-400">
                       <Crown className="h-2.5 w-2.5" />
@@ -672,13 +901,17 @@ function AssistantsTab({
                     </span>
                   )}
                 </div>
-                {a.assistantEmail && (
-                  <p className="text-xs text-muted-foreground">
-                    {a.assistantEmail}
-                  </p>
-                )}
+                {a.assistantEmail && <p className="text-xs text-muted-foreground">{a.assistantEmail}</p>}
               </div>
             </div>
+            <button
+              onClick={() => handleRemove(a.assistantId)}
+              disabled={removingId === a.assistantId}
+              className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-500/10 transition-colors disabled:opacity-50 dark:text-red-400"
+            >
+              <Trash2 className="h-3 w-3" />
+              {removingId === a.assistantId ? "…" : "Remove"}
+            </button>
           </div>
         ))
       )}
@@ -765,7 +998,11 @@ export function OfferingTabs({ data }: { data: OfferingTabsData }) {
         />
       )}
       {activeTab === "assistants" && (
-        <AssistantsTab assistants={data.assistants} />
+        <AssistantsTab
+          assistants={data.assistants}
+          availableAssistants={data.availableAssistants}
+          offeringId={data.offering.id}
+        />
       )}
     </div>
   );

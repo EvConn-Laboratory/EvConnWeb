@@ -25,13 +25,13 @@ import {
   offeringAssistants,
   groups,
 } from "@/lib/db/schema";
-import { eq, asc, sql } from "drizzle-orm";
-import { Button } from "@/components/ui/button";
+import { eq, asc, sql, inArray } from "drizzle-orm";
 import { cn } from "@/lib/utils";
 import {
   OfferingTabs,
   type OfferingTabsData,
 } from "./_components/OfferingTabs";
+import { EditOfferingForm } from "./_components/EditOfferingForm";
 
 // ─── Status config ────────────────────────────────────────────────────────────
 
@@ -148,7 +148,14 @@ export default async function OfferingManagePage({ params }: PageProps) {
     contentCount: contentCountMap.get(m.id) ?? 0,
   }));
 
-  // 6. Assigned assistants (assistantId references users.id)
+  // 6. Available assistant users
+  const availableAssistantUsers = await db
+    .select({ id: users.id, name: users.name, email: users.email })
+    .from(users)
+    .where(inArray(users.role, ["assistant", "super_admin"]))
+    .orderBy(users.name);
+
+  // 7. Assigned assistants (assistantId references users.id)
   const assistantRows = await db
     .select({
       id: offeringAssistants.id,
@@ -180,6 +187,7 @@ export default async function OfferingManagePage({ params }: PageProps) {
     students: studentRows,
     modules: modulesWithCount,
     assistants: assistantRows,
+    availableAssistants: availableAssistantUsers,
   };
 
   // ─── Status badge ──────────────────────────────────────────────────────────
@@ -284,11 +292,7 @@ export default async function OfferingManagePage({ params }: PageProps) {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" disabled>
-            Edit Offering
-          </Button>
-        </div>
+        <EditOfferingForm offering={tabsData.offering} />
       </div>
 
       {/* Tabs */}

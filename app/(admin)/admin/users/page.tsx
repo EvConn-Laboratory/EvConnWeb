@@ -10,6 +10,7 @@ import {
   GraduationCap,
   UserRound,
   Ghost,
+  Trophy,
 } from "lucide-react";
 import { getUsersAction, softDeleteUserAction } from "@/lib/actions/users";
 import { Badge } from "@/components/ui/badge";
@@ -164,6 +165,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                 <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">NIM</th>
                 <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">Email</th>
                 <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">Role</th>
+                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">Hall of Fame</th>
                 <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">Status</th>
                 <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">Created</th>
                 <th className="whitespace-nowrap px-4 py-3 text-right text-xs font-medium text-muted-foreground">Actions</th>
@@ -172,7 +174,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
             <tbody className="divide-y divide-border">
               {users.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-sm text-muted-foreground">
+                  <td colSpan={8} className="px-4 py-12 text-center text-sm text-muted-foreground">
                     {q || role ? "No users match the current filters." : "No users yet."}
                   </td>
                 </tr>
@@ -193,6 +195,19 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                     </td>
                     <td className="px-4 py-3">
                       <RoleBadge role={user.role} />
+                    </td>
+                    <td className="px-4 py-3">
+                      {user.hallOfFameProfileId && user.hallOfFameGenerationId ? (
+                        <Link
+                          href={`/admin/hall-of-fame/assistants?generationId=${user.hallOfFameGenerationId}`}
+                          className="inline-flex items-center gap-1 text-xs font-medium text-amber-600 hover:text-amber-700 dark:text-amber-400"
+                        >
+                          <Trophy className="h-3 w-3" />
+                          G{user.hallOfFameGenerationNumber} · {user.hallOfFameStatus === "active" ? "Active" : "Alumni"}
+                        </Link>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       {user.mustChangePassword ? (

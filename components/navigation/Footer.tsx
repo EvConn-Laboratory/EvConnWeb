@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Github, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
+import { Github, Instagram, Linkedin, Mail, MapPin, Phone, MessageCircle } from "lucide-react";
 
 const footerLinks = {
   platform: [
@@ -33,7 +33,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="inline-flex items-center gap-2.5">
-              <Image src="/evconn.png" alt="EvConn Laboratory" width={26} height={26} className="rounded-sm" />
+              <Image src="/evconn-light.png" alt="EvConn Laboratory" width={26} height={26} className="rounded-sm" />
               <span className="text-sm font-semibold tracking-tight text-foreground">
                 EvConn <span className="text-primary">Lab</span>
               </span>
@@ -44,17 +44,23 @@ export default function Footer() {
             </p>
             <div className="mt-5 flex items-center gap-2">
               {[
-                { href: "https://github.com", icon: Github, label: "GitHub" },
                 {
-                  href: "https://instagram.com",
+                  href: "https://line.me/R/ti/p/@077xjusr?from=page&utm_source=ig&utm_medium=social&utm_content=link_in_bio&searchId=077xjusr",
+                  icon: MessageCircle,
+                  label: "Line",
+                },
+                
+                {
+                  href: "https://instagram.com/labevconn",
                   icon: Instagram,
                   label: "Instagram",
                 },
                 {
-                  href: "https://linkedin.com",
+                  href: "https://linkedin.com/company/evconn-laboratory",
                   icon: Linkedin,
                   label: "LinkedIn",
                 },
+                { href: "https://github.com/EvConn-Laboratory", icon: Github, label: "GitHub" },
               ].map(({ href, icon: Icon, label }) => (
                 <a
                   key={label}
@@ -116,26 +122,17 @@ export default function Footer() {
             <ul className="mt-4 space-y-3">
               <li>
                 <a
-                  href="mailto:lab@evconn.ac.id"
+                  href="mailto:evconn@telkomuniversity.ac.id"
                   className="flex items-start gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <Mail className="mt-0.5 h-4 w-4 shrink-0" />
-                  lab@evconn.ac.id
-                </a>
-              </li>
-              <li>
-                <a
-                  href="tel:+62000000000"
-                  className="flex items-start gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  <Phone className="mt-0.5 h-4 w-4 shrink-0" />
-                  +62 000-0000-0000
+                  evconn@telkomuniversity.ac.id
                 </a>
               </li>
               <li>
                 <span className="flex items-start gap-2 text-sm text-muted-foreground">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
-                  Computer Engineering Building, 2nd Floor
+                  Telkom University Landmark Tower TULT-14.12 Bandung, West Java 40257
                 </span>
               </li>
             </ul>
@@ -159,8 +156,7 @@ export default function Footer() {
           </p>
           <p className="text-xs text-muted-foreground">
             Built with{" "}
-            <span className="text-foreground/80">Next.js</span> &amp;{" "}
-            <span className="text-foreground/80">Tailwind CSS</span>
+            <span className="text-foreground/80">Love</span>
           </p>
         </div>
       </div>

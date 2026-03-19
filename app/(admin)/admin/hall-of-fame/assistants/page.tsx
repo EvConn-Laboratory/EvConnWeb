@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { asc, eq } from "drizzle-orm";
 import { AddAssistantForm } from "./_components/AddAssistantForm";
 import { EditAssistantForm } from "./_components/EditAssistantForm";
+import { getUsersForAssistantLinkingAction } from "@/lib/actions/personnel";
 
 export const metadata: Metadata = { title: "Assistants | Hall of Fame | Admin" };
 
@@ -63,11 +64,12 @@ export default async function AssistantsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const generationId = params.generationId;
 
-  const [allGenerations, rows, allOrgRoles, allRoleAssignments] = await Promise.all([
+  const [allGenerations, rows, allOrgRoles, allRoleAssignments, usersForLinking] = await Promise.all([
     db.select().from(generations).orderBy(asc(generations.number)),
     db
       .select({
         id: assistantProfiles.id,
+        userId: assistantProfiles.userId,
         fullName: assistantProfiles.fullName,
         status: assistantProfiles.status,
         generationId: assistantProfiles.generationId,
@@ -94,6 +96,7 @@ export default async function AssistantsPage({ searchParams }: PageProps) {
       })
       .from(assistantRoles)
       .innerJoin(organizationalRoles, eq(assistantRoles.roleId, organizationalRoles.id)),
+    getUsersForAssistantLinkingAction(),
   ]);
 
   // Build roles map per assistant
@@ -142,7 +145,10 @@ export default async function AssistantsPage({ searchParams }: PageProps) {
           </p>
         </div>
 
-        <AddAssistantForm generations={allGenerations.map((g) => ({ id: g.id, number: g.number, name: g.name }))} />
+        <AddAssistantForm
+          generations={allGenerations.map((g) => ({ id: g.id, number: g.number, name: g.name }))}
+          usersForLinking={usersForLinking}
+        />
       </div>
 
       <div className="flex gap-1 border-b border-border">
@@ -276,6 +282,7 @@ export default async function AssistantsPage({ searchParams }: PageProps) {
                         <EditAssistantForm
                           assistant={{
                             id: row.id,
+                            userId: row.userId,
                             fullName: row.fullName,
                             generationId: row.generationId,
                             joinedYear: row.joinedYear,
@@ -288,6 +295,7 @@ export default async function AssistantsPage({ searchParams }: PageProps) {
                           generations={allGenerations.map((g) => ({ id: g.id, number: g.number, name: g.name }))}
                           currentRoles={row.roles}
                           availableRoles={allOrgRoles.map((r) => ({ id: r.id, name: r.name, sortOrder: r.sortOrder }))}
+                          usersForLinking={usersForLinking}
                         />
                       </div>
                     </td>

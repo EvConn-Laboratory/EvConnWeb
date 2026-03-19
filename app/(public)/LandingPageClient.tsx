@@ -136,25 +136,18 @@ export default function LandingPageClient({
           transition={{ duration: 0.7 }}
           className="relative z-10 max-w-3xl"
         >
-          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/8 px-3.5 py-1.5 text-xs font-semibold text-primary shadow-sm">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-            </span>
-            Integrated Laboratory Platform
-          </span>
 
           <h1
             className="text-5xl font-bold leading-tight tracking-tight text-foreground sm:text-6xl lg:text-7xl"
           >
-            One Platform for{" "}
-            <span className="text-primary">All Lab Activities</span>
+           EvConn 
+            <span className="text-primary"> Laboratory</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+          {/* <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             EvConn Lab unifies practicum sessions, study groups, grading, and
             assistant management in one efficient digital ecosystem.
-          </p>
+          </p> */}
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <Link
@@ -221,15 +214,14 @@ export default function LandingPageClient({
         <section className="py-24">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="mb-12">
-              <SectionLabel>Practicum &amp; Study Groups</SectionLabel>
+              <SectionLabel>Lab Programs</SectionLabel>
               <h2
                 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
               >
-                Master Computer Engineering
+                Our Programs
               </h2>
               <p className="mt-3 max-w-xl text-muted-foreground">
-                Choose a program that fits your interests and goals. From
-                required practicums to open study groups for everyone.
+                Explore our programs and find the one that fits your interests and goals.
               </p>
             </div>
 
@@ -381,51 +373,7 @@ export default function LandingPageClient({
         </section>
       </FadeIn>
 
-      {/* ── CTA ── */}
-      <FadeIn>
-        <section className="relative overflow-hidden border-t border-border bg-card py-24">
-          {/* Subtle background network for CTA section */}
-          <div className="absolute inset-0 z-0 opacity-20 dark:opacity-15">
-            <NetworkBackground className="h-full w-full" />
-          </div>
-          <div className="absolute inset-0 z-0 bg-gradient-to-t from-card via-card/60 to-card/20" />
-
-          <div className="relative z-10 mx-auto max-w-2xl px-6 text-center lg:px-8">
-            <div
-              className="mx-auto mb-5 flex h-14 w-14 items-center justify-center bg-primary/10 text-primary"
-              style={{
-                clipPath:
-                  "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-              }}
-            >
-              <GraduationCap className="h-6 w-6" />
-            </div>
-            <h2
-              className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
-            >
-              Ready to Join?
-            </h2>
-            <p className="mt-4 text-muted-foreground">
-              Register now and start your learning journey alongside thousands
-              of Computer Engineering students.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                href="/register"
-                className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20"
-              >
-                Register Free <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/programs"
-                className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
-              >
-                View Programs
-              </Link>
-            </div>
-          </div>
-        </section>
-      </FadeIn>
+     
     </div>
   );
 }

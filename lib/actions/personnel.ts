@@ -9,7 +9,7 @@ import {
   users,
 } from "@/lib/db/schema";
 import { getSession } from "@/lib/auth/session";
-import { eq, and, asc, desc, count } from "drizzle-orm";
+import { eq, and, asc, desc, count, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -361,6 +361,16 @@ export async function getAllAssistantsWithRolesAction() {
       (a, b) => a.sortOrder - b.sortOrder,
     ),
   }));
+}
+
+/** Users with role assistant or super_admin, for linking to Hall of Fame profiles. */
+export async function getUsersForAssistantLinkingAction() {
+  await requireAdmin();
+  return db
+    .select({ id: users.id, name: users.name, email: users.email })
+    .from(users)
+    .where(inArray(users.role, ["assistant", "super_admin"]))
+    .orderBy(users.name);
 }
 
 export async function reorderAssistantsAction(

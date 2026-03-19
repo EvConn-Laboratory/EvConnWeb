@@ -30,7 +30,7 @@ export default function AuthLayout({
         href="/"
         className="relative z-10 mb-8 flex items-center gap-2.5 transition-opacity hover:opacity-75"
       >
-        <Image src="/evconn.png" alt="EvConn Laboratory" width={36} height={36} className="rounded-sm" />
+        <Image src="/evconn-light.png" alt="EvConn Laboratory" width={36} height={36} className="rounded-sm" />
         <span className="text-lg font-semibold tracking-tight text-foreground">
           EvConn <span className="text-primary">Lab</span>
         </span>

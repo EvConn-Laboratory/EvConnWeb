@@ -135,7 +135,7 @@ export function LmsSidebar({ role, userName }: LmsSidebarProps) {
       >
         {!collapsed && (
           <Link href="/lms/dashboard" className="flex items-center gap-2">
-            <Image src="/evconn.png" alt="EvConn Laboratory" width={24} height={24} className="rounded-sm shrink-0" />
+            <Image src="/evconn-light.png" alt="EvConn Laboratory" width={24} height={24} className="rounded-sm shrink-0" />
             <span className="text-sm font-semibold text-sidebar-foreground">
               EvConn <span className="text-primary">Lab</span>
             </span>
@@ -143,7 +143,7 @@ export function LmsSidebar({ role, userName }: LmsSidebarProps) {
         )}
         {collapsed && (
           <Link href="/lms/dashboard">
-            <Image src="/evconn.png" alt="EvConn Laboratory" width={24} height={24} className="rounded-sm" />
+            <Image src="/evconn-light.png" alt="EvConn Laboratory" width={24} height={24} className="rounded-sm" />
           </Link>
         )}
         <button

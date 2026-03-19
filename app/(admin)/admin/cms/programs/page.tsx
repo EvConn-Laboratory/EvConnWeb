@@ -6,6 +6,7 @@ import { getSession } from "@/lib/auth/session";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AddProgramForm } from "./_components/AddProgramForm";
+import { EditProgramForm } from "./_components/EditProgramForm";
 
 export const metadata: Metadata = { title: "Programs | CMS | Admin" };
 
@@ -94,7 +95,7 @@ export default async function AdminCmsProgramsPage() {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center justify-end">
+                      <div className="flex items-center justify-end gap-2">
                         <form action={handleToggleProgram}>
                           <input type="hidden" name="id" value={program.id} />
                           <input type="hidden" name="isPublished" value={String(program.isPublished)} />
@@ -112,6 +113,7 @@ export default async function AdminCmsProgramsPage() {
                             {program.isPublished ? "Unpublish" : "Publish"}
                           </Button>
                         </form>
+                        <EditProgramForm program={program} />
                       </div>
                     </td>
                   </tr>

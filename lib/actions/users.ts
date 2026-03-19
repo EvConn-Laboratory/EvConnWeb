@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
+import { users, assistantProfiles, generations } from "@/lib/db/schema";
 import { getSession } from "@/lib/auth/session";
 import { hashPassword } from "@/lib/auth/password";
 import { eq, isNull, desc, ilike, or, and, sql } from "drizzle-orm";
@@ -74,8 +74,15 @@ export async function getUsersAction({
         role: users.role,
         mustChangePassword: users.mustChangePassword,
         createdAt: users.createdAt,
+        hallOfFameProfileId: assistantProfiles.id,
+        hallOfFameGenerationId: generations.id,
+        hallOfFameGenerationNumber: generations.number,
+        hallOfFameGenerationName: generations.name,
+        hallOfFameStatus: assistantProfiles.status,
       })
       .from(users)
+      .leftJoin(assistantProfiles, eq(assistantProfiles.userId, users.id))
+      .leftJoin(generations, eq(assistantProfiles.generationId, generations.id))
       .where(whereClause)
       .orderBy(desc(users.createdAt))
       .limit(PAGE_SIZE)

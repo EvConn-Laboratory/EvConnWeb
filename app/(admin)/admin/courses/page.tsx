@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = { title: "Course Management | Admin" };
 
 import { AddCourseForm } from "./_components/AddCourseForm";
+import { EditCourseForm } from "./_components/EditCourseForm";
 // ─── Status badge config ─────────────────────────────────────────────────────
 
 const STATUS_CONFIG: Record<
@@ -158,6 +159,7 @@ function CourseCard({ course, offerings }: CourseCardProps) {
 
           {/* Actions */}
           <div className="flex shrink-0 items-center gap-2">
+            <EditCourseForm course={course} />
             <Button variant="outline" size="xs" asChild className="gap-1">
               <Link href={`/admin/courses/${course.id}/edit`}>
                 <Plus className="h-3 w-3" />

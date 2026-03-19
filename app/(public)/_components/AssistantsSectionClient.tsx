@@ -189,14 +189,6 @@ export default function AssistantsSectionClient({ data }: { data: GenerationWith
         )}
       </AnimatePresence>
 
-      <div className="mt-8 text-center">
-        <Link
-          href="/hall-of-fame"
-          className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
-        >
-          View full Hall of Fame <ArrowRight className="h-4 w-4" />
-        </Link>
-      </div>
     </div>
   );
 }

@@ -31,6 +31,7 @@ interface AssignedRole {
 
 interface AssistantRow {
   id: string;
+  userId: string | null;
   fullName: string;
   generationId: string;
   joinedYear: number;
@@ -41,14 +42,21 @@ interface AssistantRow {
   linkedinUrl: string | null;
 }
 
+interface UserForLinking {
+  id: string;
+  name: string;
+  email: string | null;
+}
+
 interface Props {
   assistant: AssistantRow;
   generations: Generation[];
   currentRoles: AssignedRole[];
   availableRoles: OrgRole[];
+  usersForLinking: UserForLinking[];
 }
 
-export function EditAssistantForm({ assistant, generations, currentRoles, availableRoles }: Props) {
+export function EditAssistantForm({ assistant, generations, currentRoles, availableRoles, usersForLinking }: Props) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -177,6 +185,27 @@ export function EditAssistantForm({ assistant, generations, currentRoles, availa
               defaultValue={assistant.fullName}
               className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground"
             />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-foreground">
+              Link to User Account <span className="text-muted-foreground">(optional)</span>
+            </label>
+            <select
+              name="userId"
+              defaultValue={assistant.userId ?? ""}
+              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground"
+            >
+              <option value="">— No link —</option>
+              {usersForLinking.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.name} {u.email ? `(${u.email})` : ""}
+                </option>
+              ))}
+            </select>
+            <p className="text-[11px] text-muted-foreground">
+              Links this profile to a user so they appear in Users and can be assigned to offerings.
+            </p>
           </div>
 
           <div className="space-y-1.5">

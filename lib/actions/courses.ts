@@ -227,6 +227,24 @@ export async function updateOfferingAction(
   return { success: true };
 }
 
+export async function deleteOfferingAction(id: string): Promise<ActionResult> {
+  await requireAdmin();
+
+  const [activeEnrollments] = await db
+    .select({ count: enrollments.id })
+    .from(enrollments)
+    .where(eq(enrollments.offeringId, id))
+    .limit(1);
+
+  if (activeEnrollments)
+    return { error: "Cannot delete an offering that has enrolled students." };
+
+  await db.delete(courseOfferings).where(eq(courseOfferings.id, id));
+
+  revalidatePath("/admin/courses");
+  return { success: true };
+}
+
 export async function updateOfferingStatusAction(
   id: string,
   status: "draft" | "active" | "closed" | "archived",
