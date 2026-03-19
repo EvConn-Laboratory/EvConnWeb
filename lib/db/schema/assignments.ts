@@ -30,7 +30,7 @@ export const assignments = pgTable("assignments", {
   id: uuid("id").primaryKey().defaultRandom(),
   moduleId: uuid("module_id")
     .notNull()
-    .references(() => modules.id),
+    .references(() => modules.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
   description: text("description"),
   type: assignmentTypeEnum("type").notNull(),
@@ -53,7 +53,7 @@ export const mcqQuestions = pgTable("mcq_questions", {
   id: uuid("id").primaryKey().defaultRandom(),
   assignmentId: uuid("assignment_id")
     .notNull()
-    .references(() => assignments.id),
+    .references(() => assignments.id, { onDelete: "cascade" }),
   questionText: text("question_text").notNull(),
   orderIndex: integer("order_index").notNull().default(0),
   points: numeric("points", { precision: 5, scale: 2 }).notNull().default("1"),
@@ -64,7 +64,7 @@ export const mcqOptions = pgTable("mcq_options", {
   id: uuid("id").primaryKey().defaultRandom(),
   questionId: uuid("question_id")
     .notNull()
-    .references(() => mcqQuestions.id),
+    .references(() => mcqQuestions.id, { onDelete: "cascade" }),
   optionText: text("option_text").notNull(),
   isCorrect: boolean("is_correct").notNull().default(false),
   orderIndex: integer("order_index").notNull().default(0),
@@ -76,7 +76,7 @@ export const submissions = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     assignmentId: uuid("assignment_id")
       .notNull()
-      .references(() => assignments.id),
+      .references(() => assignments.id, { onDelete: "cascade" }),
     studentId: uuid("student_id").notNull(),
     filePath: text("file_path"),
     textAnswer: text("text_answer"),
@@ -92,7 +92,7 @@ export const submissionHistory = pgTable("submission_history", {
   id: uuid("id").primaryKey().defaultRandom(),
   submissionId: uuid("submission_id")
     .notNull()
-    .references(() => submissions.id),
+    .references(() => submissions.id, { onDelete: "cascade" }),
   assignmentId: uuid("assignment_id").notNull(),
   studentId: uuid("student_id").notNull(),
   filePath: text("file_path"),
@@ -106,10 +106,10 @@ export const mcqAnswers = pgTable("mcq_answers", {
   id: uuid("id").primaryKey().defaultRandom(),
   submissionId: uuid("submission_id")
     .notNull()
-    .references(() => submissions.id),
+    .references(() => submissions.id, { onDelete: "cascade" }),
   questionId: uuid("question_id")
     .notNull()
-    .references(() => mcqQuestions.id),
+    .references(() => mcqQuestions.id, { onDelete: "cascade" }),
   selectedOptionId: uuid("selected_option_id"),
   isCorrect: boolean("is_correct").notNull().default(false),
 });
@@ -119,7 +119,7 @@ export const grades = pgTable("grades", {
   submissionId: uuid("submission_id")
     .notNull()
     .unique()
-    .references(() => submissions.id),
+    .references(() => submissions.id, { onDelete: "cascade" }),
   score: numeric("score", { precision: 5, scale: 2 }).notNull(),
   gradedBy: uuid("graded_by").notNull(),
   gradedAt: timestamp("graded_at").notNull().defaultNow(),

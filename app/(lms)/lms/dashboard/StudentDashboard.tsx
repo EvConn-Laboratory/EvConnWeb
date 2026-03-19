@@ -121,7 +121,7 @@ function CourseCard({ course, index }: { course: EnrolledCourse; index: number }
           <div className="mb-1.5 flex justify-between text-xs text-muted-foreground">
             <span>Progress</span>
             <span className="tabular-nums">
-              {course.modulesComplete}/{course.modulesTotal} modul
+              {course.modulesComplete}/{course.modulesTotal} modules
             </span>
           </div>
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
@@ -163,73 +163,74 @@ export default function StudentDashboard({
           Dashboard
         </p>
         <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground">
-          Halo, {firstName} 👋
+          Hello, {firstName} 👋
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Berikut ringkasan progres belajarmu.
+          Here is a summary of your learning progress.
         </p>
       </motion.div>
 
       {/* Stats */}
       <motion.div
         variants={fadeUp}
-        className="grid grid-cols-2 gap-4 lg:grid-cols-4"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
       >
         <StatCard
           icon={BookOpen}
           value={courses.length}
-          label="Mata Kuliah"
-          sub="Aktif semester ini"
+          label="Courses"
+          sub="Active this semester"
           color="bg-primary/10 text-primary"
           href="/lms/courses"
         />
         <StatCard
           icon={CheckSquare}
           value={`${completedModulesCount}/${totalModulesCount}`}
-          label="Modul Selesai"
-          sub="Dari semua mata kuliah"
+          label="Modules Completed"
+          sub="From all courses"
           color="bg-green-500/10 text-green-400"
         />
         <StatCard
           icon={ClipboardList}
           value={`${submittedAssignmentsCount}/${totalAssignmentsCount}`}
-          label="Tugas Dikumpul"
-          sub="Semua mata kuliah"
+          label="Tasks Submitted"
+          sub="All courses"
           color="bg-blue-500/10 text-blue-400"
           href="/lms/assignments"
         />
         <StatCard
           icon={Star}
           value={gradedCount}
-          label="Nilai Diterima"
-          sub="Tugas yang sudah dinilai"
+          label="Grades Received"
+          sub="Tasks that have been graded"
           color="bg-amber-500/10 text-amber-400"
           href="/lms/grades"
         />
       </motion.div>
+
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Courses */}
         <motion.div variants={fadeUp} className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-foreground">
-              Mata Kuliah Aktif
+              Active Courses
             </h2>
             <Link
               href="/lms/courses"
               className="text-xs font-medium text-primary hover:underline"
             >
-              Semua →
+              All →
             </Link>
           </div>
           {courses.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-card py-12 text-center">
               <BookOpen className="mb-2 h-8 w-8 text-muted-foreground/30" />
               <p className="text-sm font-medium text-foreground">
-                Belum ada mata kuliah
+                No courses yet
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Hubungi asisten untuk mendaftar.
+                Please contact an assistant to enroll.
               </p>
             </div>
           ) : (
@@ -250,13 +251,13 @@ export default function StudentDashboard({
           <motion.div variants={fadeUp}>
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-semibold text-foreground">
-                Modul Terkini
+                Recent Modules
               </h2>
             </div>
             <div className="rounded-xl border border-border bg-card overflow-hidden">
               {recentModules.length === 0 ? (
                 <p className="p-5 text-sm text-muted-foreground">
-                  Belum ada modul.
+                  No modules yet.
                 </p>
               ) : (
                 <div className="divide-y divide-border">
@@ -268,7 +269,7 @@ export default function StudentDashboard({
                     >
                       <div className="min-w-0">
                         <p className="truncate text-xs font-medium text-foreground">
-                          Modul {mod.orderIndex} — {mod.title}
+                          Module {mod.orderIndex} — {mod.title}
                         </p>
                       </div>
                       <span
@@ -279,7 +280,7 @@ export default function StudentDashboard({
                             : "bg-muted text-muted-foreground",
                         )}
                       >
-                        {mod.isComplete ? "Selesai" : "Belum"}
+                        {mod.isComplete ? "Complete" : "Not yet"}
                       </span>
                     </Link>
                   ))}
@@ -294,16 +295,16 @@ export default function StudentDashboard({
             className="rounded-xl border border-primary/20 bg-primary/5 p-4"
           >
             <p className="text-sm font-semibold text-foreground">
-              Berikan Feedback
+              Give Feedback
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Penilaian Anda membantu meningkatkan kualitas praktikum.
+              Your feedback helps improve the quality of the practicum.
             </p>
             <Link
               href="/lms/feedback"
               className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
             >
-              Beri feedback <ArrowRight className="h-3.5 w-3.5" />
+              Give feedback <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </motion.div>
         </div>

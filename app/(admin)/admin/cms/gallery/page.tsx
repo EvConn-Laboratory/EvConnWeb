@@ -44,25 +44,25 @@ export default async function AdminCmsGalleryPage() {
   const publishedCount = items.filter((i) => i.isPublished).length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-left">
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400 text-left">
               <Image className="h-4 w-4" />
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-foreground">
+            <h1 className="text-xl font-bold tracking-tight text-foreground text-left">
               Gallery
             </h1>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground text-left">
             {items.length === 0
-              ? "Belum ada item"
-              : `${items.length} item · `}
+              ? "No items yet"
+              : `${items.length} items · `}
             {items.length > 0 && (
               <span className="text-green-600 dark:text-green-400">
-                {publishedCount} diterbitkan
+                {publishedCount} published
               </span>
             )}
           </p>
@@ -72,36 +72,36 @@ export default async function AdminCmsGalleryPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+      <div className="rounded-xl border border-border bg-card overflow-hidden text-left">
+        <div className="overflow-x-auto text-left">
+          <table className="w-full text-sm text-left">
             <thead>
-              <tr className="border-b border-border bg-muted/40">
-                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">
-                  Urutan
+              <tr className="border-b border-border bg-muted/40 text-left">
+                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold text-muted-foreground">
+                  Order
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">
-                  Judul
+                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold text-muted-foreground">
+                  Title
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">
+                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold text-muted-foreground">
                   File
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">
+                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold text-muted-foreground">
                   Status
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-right text-xs font-medium text-muted-foreground">
-                  Aksi
+                <th className="whitespace-nowrap px-4 py-3 text-right text-xs font-semibold text-muted-foreground">
+                  Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="divide-y divide-border text-left">
               {items.length === 0 ? (
                 <tr>
                   <td
                     colSpan={5}
                     className="px-4 py-12 text-center text-sm text-muted-foreground"
                   >
-                    Belum ada item gallery.
+                    No gallery items yet.
                   </td>
                 </tr>
               ) : (
@@ -119,15 +119,15 @@ export default async function AdminCmsGalleryPage() {
 
                     {/* Title */}
                     <td className="px-4 py-3">
-                      <p className="font-medium text-foreground">
+                      <p className="font-medium text-foreground text-left">
                         {item.title ?? (
                           <span className="italic text-muted-foreground">
-                            Tanpa judul
+                            Untitled
                           </span>
                         )}
                       </p>
                       {item.description && (
-                        <p className="text-xs text-muted-foreground line-clamp-1">
+                        <p className="text-xs text-muted-foreground line-clamp-1 text-left">
                           {item.description}
                         </p>
                       )}
@@ -135,7 +135,7 @@ export default async function AdminCmsGalleryPage() {
 
                     {/* File path */}
                     <td className="px-4 py-3 max-w-xs">
-                      <span className="font-mono text-xs text-muted-foreground truncate block max-w-[200px]">
+                      <span className="font-mono text-xs text-muted-foreground truncate block max-w-[200px] text-left">
                         {item.filePath}
                       </span>
                     </td>
@@ -144,18 +144,18 @@ export default async function AdminCmsGalleryPage() {
                     <td className="px-4 py-3">
                       {item.isPublished ? (
                         <span className="inline-flex items-center rounded-full border border-green-500/20 bg-green-500/10 px-2 py-0.5 text-[11px] font-medium text-green-600 dark:text-green-400">
-                          Diterbitkan
+                          Published
                         </span>
                       ) : (
                         <span className="inline-flex items-center rounded-full border border-border bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-                          Disembunyikan
+                          Hidden
                         </span>
                       )}
                     </td>
 
                     {/* Actions */}
                     <td className="px-4 py-3">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-2 text-left">
                         <form action={handleToggleGallery}>
                           <input type="hidden" name="id" value={item.id} />
                           <input
@@ -168,13 +168,13 @@ export default async function AdminCmsGalleryPage() {
                             variant="outline"
                             size="xs"
                             className={cn(
-                              "gap-1",
+                              "gap-1 font-semibold",
                               item.isPublished
                                 ? "text-muted-foreground"
                                 : "text-green-600 border-green-500/30 hover:bg-green-500/10",
                             )}
                           >
-                            {item.isPublished ? "Sembunyikan" : "Tampilkan"}
+                            {item.isPublished ? "Hide" : "Show"}
                           </Button>
                         </form>
                         <EditGalleryItemForm item={item} />

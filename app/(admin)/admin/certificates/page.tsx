@@ -12,7 +12,7 @@ import {
 import { Award } from "lucide-react";
 import { CertificateManager } from "./CertificateManager";
 
-export const metadata = { title: "Manajemen Sertifikat | Admin" };
+export const metadata = { title: "Certificates Management | Admin" };
 
 export default async function AdminCertificatesPage() {
   const session = await getSession();
@@ -81,16 +81,16 @@ export default async function AdminCertificatesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-left">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
             <Award className="h-4 w-4" />
           </div>
           <h1 className="text-xl font-bold tracking-tight text-foreground">
-            Manajemen Sertifikat
+            Certificates Management
           </h1>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Terbitkan sertifikat kelulusan dan kelola pencabutan sertifikat.
+        <p className="mt-1 text-sm text-muted-foreground text-left">
+          Issue completion certificates and manage revocations.
         </p>
       </div>
 

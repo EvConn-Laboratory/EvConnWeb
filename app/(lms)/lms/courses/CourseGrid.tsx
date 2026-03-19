@@ -91,7 +91,7 @@ function CourseCard({
         </div>
 
         <span className="mt-4 text-xs font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
-          Lihat Modul →
+          View Modules →
         </span>
       </Link>
     </motion.div>
@@ -105,9 +105,9 @@ export default function CourseGrid({ offerings }: { offerings: OfferingItem[] })
         <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
           <BookOpen className="h-6 w-6 text-muted-foreground/40" />
         </div>
-        <p className="font-semibold text-foreground">Belum ada mata kuliah</p>
+        <p className="font-semibold text-foreground">No courses yet</p>
         <p className="mt-1 text-sm text-muted-foreground">
-          Hubungi asisten untuk mendaftarkan Anda ke mata kuliah.
+          Contact an assistant to enroll you in a course.
         </p>
       </div>
     );

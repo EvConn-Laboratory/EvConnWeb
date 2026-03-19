@@ -12,7 +12,7 @@ import {
 import { eq, and, asc, inArray } from "drizzle-orm";
 import { AssignmentList } from "./AssignmentList";
 
-export const metadata = { title: "Tugas Saya" };
+export const metadata = { title: "My Assignments" };
 
 export type AssignmentItem = {
   assignmentId: string;
@@ -140,38 +140,38 @@ export default async function AssignmentsPage() {
       {/* Page header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Tugas Saya
+          My Assignments
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Semua tugas dari mata kuliah yang Anda ikuti.
+          All assignments from courses you are taking.
         </p>
       </div>
 
       {/* Summary stats */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
           {
-            label: "Total Tugas",
+            label: "Total Assignments",
             value: totalAssignments,
-            sub: "Semua mata kuliah",
+            sub: "All courses",
             accent: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
           },
           {
-            label: "Belum Dikumpul",
+            label: "Not Submitted",
             value: notSubmitted,
-            sub: "Perlu segera dikerjakan",
+            sub: "Needs immediate attention",
             accent: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
           },
           {
-            label: "Dikumpulkan",
+            label: "Submitted",
             value: submitted,
-            sub: "Sudah dikumpulkan",
+            sub: "Already submitted",
             accent: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
           },
           {
-            label: "Mendesak",
+            label: "Urgent",
             value: urgentCount,
-            sub: "Deadline < 24 jam",
+            sub: "Deadline < 24 hours",
             accent:
               urgentCount > 0
                 ? "bg-red-500/10 text-red-600 dark:text-red-400"
@@ -202,7 +202,7 @@ export default async function AssignmentsPage() {
       {allAssignments.length === 0 ? (
         <div className="flex items-center justify-center rounded-2xl border border-border bg-card py-16 text-center">
           <p className="text-sm text-muted-foreground">
-            Belum ada tugas yang tersedia.
+            No assignments available.
           </p>
         </div>
       ) : (

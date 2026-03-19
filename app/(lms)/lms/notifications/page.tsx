@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { getMyNotificationsAction, markAllNotificationsReadAction } from "@/lib/actions/notifications";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "Notifikasi" };
+export const metadata: Metadata = { title: "Notifications" };
 
 const TYPE_CONFIG: Record<string, { icon: React.ElementType; color: string }> = {
   grade_published: { icon: Star, color: "bg-green-500/10 text-green-600 dark:text-green-400" },
@@ -23,11 +23,11 @@ function formatRelativeTime(date: Date): string {
   const diffHours = Math.floor(diffMins / 60);
   const diffDays = Math.floor(diffHours / 24);
 
-  if (diffMins < 1) return "Baru saja";
-  if (diffMins < 60) return `${diffMins}m yang lalu`;
-  if (diffHours < 24) return `${diffHours}j yang lalu`;
-  if (diffDays < 7) return `${diffDays}h yang lalu`;
-  return date.toLocaleDateString("id-ID", { day: "numeric", month: "short" });
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString("en-US", { day: "numeric", month: "short" });
 }
 
 export default async function NotificationsPage() {
@@ -41,7 +41,7 @@ export default async function NotificationsPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Notifikasi
+              Notifications
             </h1>
             {unreadCount > 0 && (
               <span className="inline-flex items-center rounded-full bg-primary px-2 py-0.5 text-[11px] font-medium text-primary-foreground">
@@ -50,7 +50,7 @@ export default async function NotificationsPage() {
             )}
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            Pusat pemberitahuan aktivitas terbaru Anda.
+            Your latest activity notification center.
           </p>
         </div>
 
@@ -58,7 +58,7 @@ export default async function NotificationsPage() {
           <form action={markAllNotificationsReadAction}>
             <Button variant="outline" size="sm" className="gap-1.5" type="submit">
               <CheckCheck className="h-3.5 w-3.5" />
-              Tandai semua dibaca
+              Mark all as read
             </Button>
           </form>
         )}
@@ -71,14 +71,15 @@ export default async function NotificationsPage() {
             <BellOff className="h-8 w-8" />
           </div>
           <p className="text-base font-semibold text-foreground">
-            Belum ada notifikasi
+            No notifications yet
           </p>
           <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            Notifikasi tentang tugas, nilai, dan pengumuman penting akan muncul di sini.
+            Notifications about assignments, grades, and important announcements
+            will appear here.
           </p>
           <div className="mt-6">
             <Button variant="outline" size="sm" className="rounded-lg gap-1.5" asChild>
-              <Link href="/lms/dashboard">Kembali ke Dashboard</Link>
+              <Link href="/lms/dashboard">Back to Dashboard</Link>
             </Button>
           </div>
         </div>
@@ -130,7 +131,7 @@ export default async function NotificationsPage() {
                       href={notif.link}
                       className="mt-1.5 inline-flex items-center text-[11px] font-medium text-primary hover:underline underline-offset-4"
                     >
-                      Lihat selengkapnya →
+                      See more details →
                     </Link>
                   )}
                 </div>

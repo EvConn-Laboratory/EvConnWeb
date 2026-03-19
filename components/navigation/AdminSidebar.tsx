@@ -139,22 +139,55 @@ function NavGroup({ item }: { item: NavItem }) {
   );
 }
 
+import { useDashboardSidebar } from "./DashboardSidebarProvider";
+
 export function AdminSidebar() {
+  const { isOpen, setIsOpen } = useDashboardSidebar();
+
   return (
-    <aside className="flex h-screen w-56 shrink-0 flex-col border-r border-border bg-sidebar">
-      {/* Logo */}
-      <div className="flex h-14 shrink-0 items-center gap-2.5 border-b border-border px-4">
-        <Image src="/evconn-light.png" alt="EvConn Laboratory" width={26} height={26} className="rounded-sm shrink-0" />
-        <div className="flex flex-col leading-none">
-          <span className="text-sm font-semibold tracking-tight text-foreground">
-            EvConn <span className="text-primary">Lab</span>
-          </span>
-          <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-            <ShieldCheck className="h-2.5 w-2.5" />
-            Admin Panel
-          </span>
+    <>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex h-full w-56 grow-0 flex-col border-r border-border bg-sidebar transition-transform duration-200 lg:static lg:flex lg:translate-x-0",
+          isOpen ? "translate-x-0 shadow-lg" : "-translate-x-full",
+        )}
+      >
+        {/* Logo */}
+        <div className="flex h-14 shrink-0 items-center justify-between border-b border-border px-4">
+          <div className="flex items-center gap-2.5">
+            <Image src="/evconn-light.png" alt="EvConn Laboratory" width={26} height={26} className="rounded-sm shrink-0" />
+            <div className="flex flex-col leading-none">
+              <span className="text-sm font-semibold tracking-tight text-foreground">
+                EvConn <span className="text-primary">Lab</span>
+              </span>
+              <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                <ShieldCheck className="h-2.5 w-2.5" />
+                Admin Panel
+              </span>
+            </div>
+          </div>
+          {isOpen && (
+            <button
+              onClick={() => setIsOpen(false)}
+              className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground lg:hidden"
+            >
+              <ChevronDown className="h-4 w-4 rotate-90" />
+            </button>
+          )}
         </div>
-      </div>
+
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto px-2 py-3">
@@ -178,5 +211,6 @@ export function AdminSidebar() {
         </form>
       </div>
     </aside>
+    </>
   );
 }

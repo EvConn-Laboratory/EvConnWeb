@@ -49,7 +49,7 @@ export default function EditNewsArticlePage() {
           setThumbnailPath(a.thumbnailPath ?? "");
         }
       } catch {
-        setError("Gagal memuat artikel.");
+        setError("Failed to load article.");
       } finally {
         setIsLoading(false);
       }
@@ -93,31 +93,31 @@ export default function EditNewsArticlePage() {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 text-left">
             <Link
               href="/admin/cms/news"
               className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="h-3 w-3" />
-              Kembali
+              Back
             </Link>
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-foreground">
-            Edit Artikel
+          <h1 className="text-xl font-bold tracking-tight text-foreground text-left">
+            Edit Article
           </h1>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-left">
           {status === "published" && (
             <Button
               variant="outline"
               size="sm"
               onClick={() => handleSave("draft")}
               disabled={isPending}
-              className="gap-1.5"
+              className="gap-1.5 font-semibold"
             >
               <EyeOff className="h-3.5 w-3.5" />
-              Jadikan Draft
+              Move to Draft
             </Button>
           )}
           <Button
@@ -125,49 +125,49 @@ export default function EditNewsArticlePage() {
             onClick={() => handleSave(status === "published" ? "published" : "draft")}
             disabled={isPending}
             variant="outline"
-            className="gap-1.5"
+            className="gap-1.5 font-semibold"
           >
             {isPending ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : (
               <Save className="h-3.5 w-3.5" />
             )}
-            Simpan Draft
+            Save Changes
           </Button>
           <Button
             size="sm"
             onClick={() => handleSave("published")}
             disabled={isPending}
-            className="gap-1.5"
+            className="gap-1.5 font-semibold"
           >
             {isPending ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : (
               <Eye className="h-3.5 w-3.5" />
             )}
-            Terbitkan
+            Publish
           </Button>
         </div>
       </div>
 
       {/* Status/feedback banners */}
       {error && (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive text-left">
           {error}
         </div>
       )}
       {success && (
-        <div className="rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-600 dark:text-green-400">
-          Artikel berhasil disimpan.
+        <div className="rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-600 dark:text-green-400 text-left">
+          Article saved successfully.
         </div>
       )}
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main content */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="title" className="text-xs font-medium">
-              Judul Artikel
+          <div className="space-y-1.5 text-left">
+            <Label htmlFor="title" className="text-xs font-semibold">
+              Article Title
             </Label>
             <Input
               id="title"
@@ -176,68 +176,68 @@ export default function EditNewsArticlePage() {
                 setTitle(e.target.value);
                 setSlug(slugify(e.target.value));
               }}
-              placeholder="Masukkan judul artikel..."
-              className="h-10"
+              placeholder="Enter article title..."
+              className="h-10 text-sm focus:ring-primary focus:ring-1"
             />
           </div>
 
-          <div className="space-y-1.5">
-            <Label className="text-xs font-medium">Konten</Label>
+          <div className="space-y-1.5 text-left">
+            <Label className="text-xs font-semibold">Content</Label>
             <RichTextEditor
               content={content}
               onChange={setContent}
-              placeholder="Tulis konten artikel di sini..."
+              placeholder="Write article content here..."
             />
           </div>
         </div>
 
         {/* Sidebar settings */}
         <div className="space-y-4">
-          <div className="rounded-xl border border-border bg-card p-4 space-y-4">
+          <div className="rounded-xl border border-border bg-card p-4 space-y-4 text-left">
             <h3 className="text-sm font-semibold text-foreground">
-              Pengaturan Artikel
+              Article Settings
             </h3>
 
             <div className="space-y-1.5">
-              <Label htmlFor="slug" className="text-xs font-medium">
+              <Label htmlFor="slug" className="text-xs font-semibold">
                 Slug URL
               </Label>
               <Input
                 id="slug"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
-                placeholder="url-artikel"
-                className="h-9 font-mono text-xs"
+                placeholder="article-url"
+                className="h-9 font-mono text-xs focus:ring-primary focus:ring-1"
               />
               <p className="text-[11px] text-muted-foreground">
-                /news/<span className="text-foreground">{slug || "url-artikel"}</span>
+                /news/<span className="text-foreground text-left">{slug || "article-url"}</span>
               </p>
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="thumbnail" className="text-xs font-medium">
-                Thumbnail URL (opsional)
+            <div className="space-y-1.5 text-left">
+              <Label htmlFor="thumbnail" className="text-xs font-semibold">
+                Thumbnail URL (optional)
               </Label>
               <Input
                 id="thumbnail"
                 value={thumbnailPath}
                 onChange={(e) => setThumbnailPath(e.target.value)}
                 placeholder="/storage/cms/news/..."
-                className="h-9 text-xs"
+                className="h-9 text-xs focus:ring-primary focus:ring-1"
               />
             </div>
 
-            <div className="rounded-lg bg-muted/40 px-3 py-2">
+            <div className="rounded-lg bg-muted/40 px-3 py-2 text-left">
               <p className="text-xs text-muted-foreground">
                 Status:{" "}
                 <span
                   className={
                     status === "published"
-                      ? "font-medium text-green-600 dark:text-green-400"
-                      : "font-medium text-amber-600 dark:text-amber-400"
+                      ? "font-semibold text-green-600 dark:text-green-400"
+                      : "font-semibold text-amber-600 dark:text-amber-400"
                   }
                 >
-                  {status === "published" ? "Diterbitkan" : "Draft"}
+                  {status === "published" ? "Published" : "Draft"}
                 </span>
               </p>
             </div>

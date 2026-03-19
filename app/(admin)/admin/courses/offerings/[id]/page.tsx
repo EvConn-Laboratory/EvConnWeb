@@ -25,7 +25,7 @@ import {
   offeringAssistants,
   groups,
 } from "@/lib/db/schema";
-import { eq, asc, sql, inArray } from "drizzle-orm";
+import { eq, asc, sql, inArray, and, isNull } from "drizzle-orm";
 import { cn } from "@/lib/utils";
 import {
   OfferingTabs,
@@ -96,11 +96,12 @@ export default async function OfferingManagePage({ params }: PageProps) {
 
   const { offering, course } = row;
 
-  // 2. Enrollment count
+  // 2. Enrollment count (excluding deleted users)
   const [{ enrollmentCount }] = await db
     .select({ enrollmentCount: sql<number>`count(*)` })
     .from(enrollments)
-    .where(eq(enrollments.offeringId, id));
+    .innerJoin(users, eq(enrollments.studentId, users.id))
+    .where(and(eq(enrollments.offeringId, id), isNull(users.deletedAt)));
 
   // 3. Students with groups
   const studentRows = await db
@@ -120,7 +121,7 @@ export default async function OfferingManagePage({ params }: PageProps) {
     .from(enrollments)
     .innerJoin(users, eq(enrollments.studentId, users.id))
     .leftJoin(groups, eq(enrollments.groupId, groups.id))
-    .where(eq(enrollments.offeringId, id))
+    .where(and(eq(enrollments.offeringId, id), isNull(users.deletedAt)))
     .orderBy(users.name);
 
   // 4. Modules

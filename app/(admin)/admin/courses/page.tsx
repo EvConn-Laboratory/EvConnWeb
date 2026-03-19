@@ -16,8 +16,8 @@ import {
 } from "lucide-react";
 import { getAllCoursesAction } from "@/lib/actions/courses";
 import { db } from "@/lib/db";
-import { courseOfferings, enrollments } from "@/lib/db/schema";
-import { eq, sql, desc } from "drizzle-orm";
+import { courseOfferings, enrollments, users } from "@/lib/db/schema";
+import { eq, sql, desc, and, isNull } from "drizzle-orm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -258,9 +258,11 @@ export default async function AdminCoursesPage() {
   const enrollmentCountsRaw = await db
     .select({
       offeringId: enrollments.offeringId,
-      count: sql<number>`count(*)`,
+      count: sql<number>`count(*)`
     })
     .from(enrollments)
+    .innerJoin(users, eq(enrollments.studentId, users.id))
+    .where(isNull(users.deletedAt))
     .groupBy(enrollments.offeringId);
 
   const enrollmentCountMap = new Map(

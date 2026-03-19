@@ -1,7 +1,13 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { users, assistantProfiles, generations } from "@/lib/db/schema";
+import {
+  users,
+  assistantProfiles,
+  generations,
+  enrollments,
+  offeringAssistants,
+} from "@/lib/db/schema";
 import { getSession } from "@/lib/auth/session";
 import { hashPassword } from "@/lib/auth/password";
 import { eq, isNull, desc, ilike, or, and, sql } from "drizzle-orm";
@@ -142,12 +148,27 @@ export async function softDeleteUserAction(
 
   if (!existing) return { error: "User not found or already deleted" };
 
+  // 1. Mark user as deleted
   await db
     .update(users)
     .set({ deletedAt: new Date(), updatedAt: new Date() })
     .where(eq(users.id, userId));
 
+  // 2. Clean up associated records so they don't affect stats/UI
+  // We hard delete these because they don't have soft-delete columns 
+  // and we want them gone from all listings immediately.
+  await Promise.all([
+    // Remove enrollments
+    db.delete(enrollments).where(eq(enrollments.studentId, userId)),
+    // Remove as assistant from offerings
+    db.delete(offeringAssistants).where(eq(offeringAssistants.assistantId, userId)),
+    // Remove Hall of Fame profile
+    db.delete(assistantProfiles).where(eq(assistantProfiles.userId, userId)),
+  ]);
+
   revalidatePath("/admin/users");
+  revalidatePath("/admin/courses");
+  revalidatePath("/admin/hall-of-fame");
   return { success: true };
 }
 

@@ -14,12 +14,12 @@ import { users, enrollments, offeringAssistants } from "@/lib/db/schema";
 import { eq, count } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-export const metadata: Metadata = { title: "Profil" };
+export const metadata: Metadata = { title: "Profile" };
 
 const ROLE_LABELS: Record<string, string> = {
   super_admin: "Super Admin",
-  assistant: "Asisten",
-  student: "Mahasiswa",
+  assistant: "Assistant",
+  student: "Student",
   guest: "Guest",
 };
 
@@ -40,7 +40,7 @@ function getInitials(name: string) {
 }
 
 function formatDate(date: Date) {
-  return date.toLocaleDateString("id-ID", {
+  return date.toLocaleDateString("en-US", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -92,12 +92,12 @@ export default async function ProfilePage() {
   const roleColor = ROLE_COLORS[user.role] ?? ROLE_COLORS.guest;
 
   const details = [
-    { label: "Nama Lengkap", value: user.name },
+    { label: "Full Name", value: user.name },
     { label: "Username", value: `@${user.username}` },
     ...(user.email ? [{ label: "Email", value: user.email }] : []),
-    ...(user.nim ? [{ label: "NIM", value: user.nim }] : []),
-    { label: "Peran", value: roleLabel },
-    { label: "Bergabung", value: formatDate(user.createdAt) },
+    ...(user.nim ? [{ label: "Student ID (NIM)", value: user.nim }] : []),
+    { label: "Role", value: roleLabel },
+    { label: "Joined", value: formatDate(user.createdAt) },
   ];
 
   return (
@@ -105,10 +105,10 @@ export default async function ProfilePage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Profil
+          Profile
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Informasi akun dan pengaturan profil Anda.
+          Account information and profile settings.
         </p>
       </div>
 
@@ -144,7 +144,7 @@ export default async function ProfilePage() {
             )}
             <div className="mt-2 flex items-center justify-center gap-1.5 text-xs text-muted-foreground sm:justify-start">
               <CalendarDays className="h-3.5 w-3.5" />
-              Bergabung {formatDate(user.createdAt)}
+              Joined {formatDate(user.createdAt)}
             </div>
           </div>
 
@@ -153,7 +153,7 @@ export default async function ProfilePage() {
             className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
           >
             <KeyRound className="h-3.5 w-3.5" />
-            Ganti Password
+            Change Password
           </Link>
         </div>
       </div>
@@ -169,7 +169,7 @@ export default async function ProfilePage() {
               {enrollmentCount}
             </p>
             <p className="text-xs text-muted-foreground">
-              Mata kuliah yang diikuti
+              Courses enrolled
             </p>
           </div>
         </div>
@@ -183,7 +183,7 @@ export default async function ProfilePage() {
             <p className="text-2xl font-bold text-foreground tabular-nums">
               {offeringCount}
             </p>
-            <p className="text-xs text-muted-foreground">Offering yang diampu</p>
+            <p className="text-xs text-muted-foreground">Offerings managed</p>
           </div>
         </div>
       )}
@@ -191,7 +191,7 @@ export default async function ProfilePage() {
       {/* Account details */}
       <div className="rounded-xl border border-border bg-card p-5">
         <h3 className="mb-4 text-sm font-semibold text-foreground">
-          Detail Akun
+          Account Details
         </h3>
         <div className="space-y-2">
           {details.map(({ label, value }) => (
@@ -211,15 +211,15 @@ export default async function ProfilePage() {
       {/* Edit form */}
       <div className="rounded-xl border border-border bg-card p-5">
         <h3 className="mb-1 text-sm font-semibold text-foreground">
-          Edit Profil
+          Edit Profile
         </h3>
         <p className="mb-4 text-xs text-muted-foreground">
-          Hanya nama yang dapat diubah. Field lain dikelola administrator.
+          Only the name can be changed. Other fields are managed by the administrator.
         </p>
         <form action={updateNameAction} className="space-y-4">
           <div className="space-y-1.5">
             <label htmlFor="name" className="text-xs font-medium text-foreground">
-              Nama Lengkap
+              Full Name
             </label>
             <input
               id="name"
@@ -228,7 +228,7 @@ export default async function ProfilePage() {
               defaultValue={user.name}
               minLength={2}
               required
-              placeholder="Masukkan nama lengkap"
+              placeholder="Enter full name"
               className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/30"
             />
           </div>
@@ -236,7 +236,7 @@ export default async function ProfilePage() {
             type="submit"
             className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Simpan Perubahan
+            Save Changes
           </button>
         </form>
       </div>

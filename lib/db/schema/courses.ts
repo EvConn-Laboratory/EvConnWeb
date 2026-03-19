@@ -18,7 +18,7 @@ export const courses = pgTable("courses", {
 
 export const courseOfferings = pgTable("course_offerings", {
   id: uuid("id").primaryKey().defaultRandom(),
-  courseId: uuid("course_id").notNull().references(() => courses.id),
+  courseId: uuid("course_id").notNull().references(() => courses.id, { onDelete: "cascade" }),
   semester: text("semester").notNull(),
   academicYear: text("academic_year").notNull(),
   hari: text("hari"),
@@ -34,7 +34,7 @@ export const courseOfferings = pgTable("course_offerings", {
 
 export const offeringAssistants = pgTable("offering_assistants", {
   id: uuid("id").primaryKey().defaultRandom(),
-  offeringId: uuid("offering_id").notNull().references(() => courseOfferings.id),
+  offeringId: uuid("offering_id").notNull().references(() => courseOfferings.id, { onDelete: "cascade" }),
   assistantId: uuid("assistant_id").notNull(),
   isLead: boolean("is_lead").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -42,7 +42,7 @@ export const offeringAssistants = pgTable("offering_assistants", {
 
 export const enrollments = pgTable("enrollments", {
   id: uuid("id").primaryKey().defaultRandom(),
-  offeringId: uuid("offering_id").notNull().references(() => courseOfferings.id),
+  offeringId: uuid("offering_id").notNull().references(() => courseOfferings.id, { onDelete: "cascade" }),
   studentId: uuid("student_id").notNull(),
   groupId: uuid("group_id"),
   enrolledAt: timestamp("enrolled_at").notNull().defaultNow(),

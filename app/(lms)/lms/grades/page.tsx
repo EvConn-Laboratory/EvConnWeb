@@ -12,7 +12,7 @@ import {
 import { eq, and, asc, inArray } from "drizzle-orm";
 import { GradeTable } from "./GradeTable";
 
-export const metadata = { title: "Nilai Saya" };
+export const metadata = { title: "My Grades" };
 
 export type GradeRow = {
   assignmentId: string;
@@ -175,10 +175,10 @@ export default async function GradesPage() {
       {/* Page header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Nilai Saya
+          My Grades
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Rekap nilai tugas dari semua mata kuliah yang Anda ikuti.
+          Summary of assignment grades from all courses you are taking.
         </p>
       </div>
 
@@ -186,27 +186,27 @@ export default async function GradesPage() {
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {[
           {
-            label: "Rata-rata Nilai",
+            label: "Average Grade",
             value: avgScore !== null ? avgScore.toFixed(1) : "—",
-            sub: "Dari tugas yang sudah dinilai",
+            sub: "From graded tasks",
             accent: "bg-green-500/10 text-green-600 dark:text-green-400",
           },
           {
-            label: "Sudah Dinilai",
+            label: "Graded",
             value: totalGraded,
-            sub: `dari ${totalSubmitted} dikumpulkan`,
+            sub: `from ${totalSubmitted} submitted`,
             accent: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
           },
           {
-            label: "Menunggu Penilaian",
+            label: "Pending Grade",
             value: totalPending,
-            sub: "Submitted, belum dinilai",
+            sub: "Submitted, not yet graded",
             accent: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
           },
           {
-            label: "Total Tugas",
+            label: "Total Assignments",
             value: totalAssignments,
-            sub: "Semua mata kuliah",
+            sub: "All courses",
             accent: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
           },
         ].map((stat) => (
@@ -234,7 +234,7 @@ export default async function GradesPage() {
       {courseGrades.length === 0 ? (
         <div className="flex items-center justify-center rounded-2xl border border-border bg-card py-16 text-center">
           <p className="text-sm text-muted-foreground">
-            Belum ada mata kuliah aktif.
+            No active courses yet.
           </p>
         </div>
       ) : (
@@ -254,7 +254,7 @@ export default async function GradesPage() {
                   href={`/lms/courses/${cg.offeringId}`}
                   className="text-xs font-medium text-primary hover:underline"
                 >
-                  Lihat Modul
+                  View Modules
                 </Link>
               </div>
               <GradeTable rows={cg.rows} offeringId={cg.offeringId} />

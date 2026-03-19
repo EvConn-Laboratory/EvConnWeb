@@ -118,7 +118,7 @@ export default async function AdminDashboardPage() {
     {
       icon: Award,
       value: stats.certificates,
-      label: "Sertifikat",
+      label: "Certificates",
       href: "/admin/certificates",
       color: "bg-amber-500/10 text-amber-400",
     },
@@ -162,7 +162,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
         {STAT_CARDS.map((stat) => {
           const Icon = stat.icon;
           return (

@@ -7,7 +7,7 @@ import { modules, moduleCompletions } from "@/lib/db/schema";
 import { eq, and, count } from "drizzle-orm";
 import CourseGrid from "./CourseGrid";
 
-export const metadata = { title: "Mata Kuliah Saya" };
+export const metadata = { title: "My Courses" };
 
 export default async function CoursesPage() {
   const session = await getSession();
@@ -49,20 +49,20 @@ export default async function CoursesPage() {
       {/* Page header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Mata Kuliah Saya
+          My Courses
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Daftar mata kuliah yang sedang Anda ikuti semester ini.
+          List of courses you are currently taking this semester.
         </p>
       </div>
 
       {enriched.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card py-16 text-center">
           <p className="text-sm font-medium text-muted-foreground">
-            Belum ada mata kuliah aktif.
+            No active courses yet.
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Hubungi asisten atau admin untuk mendaftarkan Anda ke mata kuliah.
+            Contact an assistant or admin to enroll you in a course.
           </p>
         </div>
       ) : (

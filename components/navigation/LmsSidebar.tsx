@@ -104,6 +104,8 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 
+import { useDashboardSidebar } from "./DashboardSidebarProvider";
+
 interface LmsSidebarProps {
   role: Role;
   userName: string;
@@ -111,6 +113,7 @@ interface LmsSidebarProps {
 
 export function LmsSidebar({ role, userName }: LmsSidebarProps) {
   const pathname = usePathname();
+  const { isOpen, setIsOpen } = useDashboardSidebar();
   const [collapsed, setCollapsed] = useState(false);
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
@@ -120,47 +123,73 @@ export function LmsSidebar({ role, userName }: LmsSidebarProps) {
     pathname === href || pathname.startsWith(href + "/");
 
   return (
-    <aside
-      className={cn(
-        "flex h-full shrink-0 flex-col border-r border-border bg-sidebar transition-[width] duration-200",
-        collapsed ? "w-14" : "w-56",
-      )}
-    >
-      {/* Header */}
-      <div
+    <>
+      {/* Mobile Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      <aside
         className={cn(
-          "flex h-14 items-center border-b border-border",
-          collapsed ? "justify-center px-3" : "justify-between px-4",
+          "fixed inset-y-0 left-0 z-50 flex h-full grow-0 flex-col border-r border-border bg-sidebar transition-all duration-200 lg:static lg:flex lg:translate-x-0",
+          collapsed ? "w-14" : "w-56",
+          isOpen ? "translate-x-0 shadow-lg" : "-translate-x-full",
         )}
       >
-        {!collapsed && (
-          <Link href="/lms/dashboard" className="flex items-center gap-2">
-            <Image src="/evconn-light.png" alt="EvConn Laboratory" width={24} height={24} className="rounded-sm shrink-0" />
-            <span className="text-sm font-semibold text-sidebar-foreground">
-              EvConn <span className="text-primary">Lab</span>
-            </span>
-          </Link>
-        )}
-        {collapsed && (
-          <Link href="/lms/dashboard">
-            <Image src="/evconn-light.png" alt="EvConn Laboratory" width={24} height={24} className="rounded-sm" />
-          </Link>
-        )}
-        <button
-          onClick={() => setCollapsed((c) => !c)}
+        {/* Header (Desktop only toggle) */}
+        <div
           className={cn(
-            "flex h-6 w-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground",
-            collapsed && "mt-0",
+            "flex h-14 items-center border-b border-border transition-all duration-200",
+            collapsed ? "justify-center px-3" : "justify-between px-4",
           )}
-          aria-label={collapsed ? "Expand" : "Collapse"}
         >
-          {collapsed ? (
-            <ChevronRight className="h-3.5 w-3.5" />
-          ) : (
-            <ChevronLeft className="h-3.5 w-3.5" />
+          {(!collapsed || isOpen) && (
+            <Link href="/lms/dashboard" className="flex items-center gap-2">
+              <Image src="/evconn-light.png" alt="EvConn Laboratory" width={24} height={24} className="rounded-sm shrink-0" />
+              <span className="text-sm font-semibold text-sidebar-foreground">
+                EvConn <span className="text-primary">Lab</span>
+              </span>
+            </Link>
           )}
-        </button>
-      </div>
+          {(collapsed && !isOpen) && (
+            <Link href="/lms/dashboard">
+              <Image src="/evconn-light.png" alt="EvConn Laboratory" width={24} height={24} className="rounded-sm" />
+            </Link>
+          )}
+          <button
+            onClick={() => setCollapsed((c) => !c)}
+            className={cn(
+              "hidden h-6 w-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground lg:flex",
+              collapsed && "mt-0",
+            )}
+            aria-label={collapsed ? "Expand" : "Collapse"}
+          >
+            {collapsed ? (
+              <ChevronRight className="h-3.5 w-3.5" />
+            ) : (
+              <ChevronLeft className="h-3.5 w-3.5" />
+            )}
+          </button>
+          
+          {/* Mobile close button inside sidebar header if open */}
+          {isOpen && (
+             <button 
+               onClick={() => setIsOpen(false)}
+               className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground lg:hidden"
+             >
+               <ChevronLeft className="h-4 w-4" />
+             </button>
+          )}
+        </div>
+
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 space-y-0.5">
@@ -298,5 +327,6 @@ export function LmsSidebar({ role, userName }: LmsSidebarProps) {
         </form>
       </div>
     </aside>
+    </>
   );
 }

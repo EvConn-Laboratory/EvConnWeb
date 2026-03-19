@@ -20,15 +20,15 @@ import { cn } from "@/lib/utils";
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const REQUIRED_COLUMNS = [
-  "nama",
+  "name",
   "nim",
-  "jurusan",
-  "kelas",
+  "major",
+  "class",
   "semester",
-  "hari",
+  "day",
   "shift",
-  "kelompok",
-  "nama_mata_kuliah",
+  "group",
+  "course_name",
 ];
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -103,11 +103,11 @@ export default function AdminImportPage() {
     setResult(null);
 
     if (!f.name.toLowerCase().endsWith(".csv")) {
-      setParseError("Hanya file .csv yang diterima.");
+      setParseError("Only .csv files are accepted.");
       return;
     }
     if (f.size > MAX_FILE_SIZE) {
-      setParseError("Ukuran file tidak boleh melebihi 5 MB.");
+      setParseError("File size cannot exceed 5 MB.");
       return;
     }
 
@@ -130,7 +130,7 @@ export default function AdminImportPage() {
         });
       },
       error: (err) => {
-        setParseError(`Gagal parse CSV: ${err.message}`);
+        setParseError(`Failed to parse CSV: ${err.message}`);
         setFile(null);
       },
     });
@@ -181,7 +181,7 @@ export default function AdminImportPage() {
       const res = await importEnrollmentCsvAction(formData);
       setResult(res as ImportResult | ImportError);
     } catch {
-      setResult({ error: "Terjadi kesalahan tak terduga. Coba lagi." });
+      setResult({ error: "An unexpected error occurred. Please try again." });
     } finally {
       setImporting(false);
     }
@@ -201,27 +201,27 @@ export default function AdminImportPage() {
     <div className="mx-auto max-w-3xl space-y-6">
       {/* Page header */}
       <div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-left">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400">
             <FileUp className="h-4 w-4" />
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-foreground">
-            Import CSV Enrollment
+          <h1 className="text-xl font-bold tracking-tight text-foreground text-left">
+            Import Enrollment CSV
           </h1>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Upload file CSV dari SIAM untuk mendaftarkan mahasiswa ke kursus.
-          Data yang sudah ada akan dilewati.
+        <p className="mt-1 text-sm text-muted-foreground text-left">
+          Upload SIAM CSV file to enroll students into courses.
+          Existing data will be skipped.
         </p>
       </div>
 
       {/* Required columns reference */}
-      <div className="rounded-xl border border-border bg-card p-4">
-        <div className="mb-3 flex items-center gap-2 text-xs font-medium text-foreground">
+      <div className="rounded-xl border border-border bg-card p-4 text-left">
+        <div className="mb-3 flex items-center gap-2 text-xs font-semibold text-foreground">
           <Table2 className="h-3.5 w-3.5 text-muted-foreground" />
-          Kolom yang dibutuhkan
+          Required Columns
         </div>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-1.5 text-left">
           {REQUIRED_COLUMNS.map((col) => (
             <ColumnPill
               key={col}
@@ -231,23 +231,23 @@ export default function AdminImportPage() {
           ))}
         </div>
         {!preview && (
-          <p className="mt-2 text-[11px] text-muted-foreground">
-            Kolom akan divalidasi setelah file dipilih.
+          <p className="mt-2 text-[11px] text-muted-foreground text-left">
+            Columns will be validated after selecting a file.
           </p>
         )}
         {preview && missingColumns.length > 0 && (
-          <p className="mt-2 flex items-center gap-1 text-[11px] text-red-600 dark:text-red-400">
+          <p className="mt-2 flex items-center gap-1 text-[11px] text-red-600 dark:text-red-400 text-left">
             <AlertCircle className="h-3 w-3 shrink-0" />
-            Kolom tidak ditemukan:{" "}
-            <span className="font-mono font-medium">
+            Missing columns:{" "}
+            <span className="font-mono font-semibold">
               {missingColumns.join(", ")}
             </span>
           </p>
         )}
         {preview && missingColumns.length === 0 && (
-          <p className="mt-2 flex items-center gap-1 text-[11px] text-green-600 dark:text-green-400">
+          <p className="mt-2 flex items-center gap-1 text-[11px] text-green-600 dark:text-green-400 text-left">
             <CheckCircle2 className="h-3 w-3 shrink-0" />
-            Semua kolom ditemukan
+            All columns found
           </p>
         )}
       </div>
@@ -283,12 +283,12 @@ export default function AdminImportPage() {
               className={cn("h-6 w-6", isDragOver ? "text-teal-500" : "")}
             />
           </div>
-          <div>
-            <p className="text-sm font-medium text-foreground">
-              {isDragOver ? "Lepaskan file di sini" : "Drag & drop file CSV"}
+          <div className="text-center">
+            <p className="text-sm font-semibold text-foreground">
+              {isDragOver ? "Drop file here" : "Drag & drop CSV file"}
             </p>
-            <p className="mt-0.5 text-xs">
-              atau klik untuk memilih file &middot; Maks. 5 MB
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              or click to browse &middot; Max 5 MB
             </p>
           </div>
           <input
@@ -303,11 +303,11 @@ export default function AdminImportPage() {
 
       {/* Parse error */}
       {parseError && (
-        <div className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4">
+        <div className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-left">
           <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
           <div className="flex-1">
-            <p className="text-sm font-medium text-red-600 dark:text-red-400">
-              Error membaca file
+            <p className="text-sm font-semibold text-red-600 dark:text-red-400">
+              Error reading file
             </p>
             <p className="mt-0.5 text-xs text-red-600/80 dark:text-red-400/80">
               {parseError}
@@ -326,18 +326,18 @@ export default function AdminImportPage() {
       {file && preview && (
         <div className="space-y-4">
           {/* File info */}
-          <div className="flex items-center justify-between rounded-xl border border-border bg-card p-4">
+          <div className="flex items-center justify-between rounded-xl border border-border bg-card p-4 text-left">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted">
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </div>
               <div>
-                <p className="text-sm font-medium text-foreground">
+                <p className="text-sm font-semibold text-foreground">
                   {file.name}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {(file.size / 1024).toFixed(1)} KB &middot;{" "}
-                  {preview.totalRows} baris data
+                  {preview.totalRows} data rows
                 </p>
               </div>
             </div>
@@ -350,25 +350,25 @@ export default function AdminImportPage() {
           </div>
 
           {/* Preview table */}
-          <div className="overflow-hidden rounded-xl border border-border bg-card">
-            <div className="border-b border-border bg-muted/40 px-4 py-2.5">
-              <p className="text-xs font-medium text-foreground">
-                Preview (menampilkan {Math.min(preview.rows.length, PREVIEW_ROWS)} dari{" "}
-                {preview.totalRows} baris)
+          <div className="overflow-hidden rounded-xl border border-border bg-card text-left">
+            <div className="border-b border-border bg-muted/40 px-4 py-2.5 text-left">
+              <p className="text-xs font-semibold text-foreground">
+                Preview (showing {Math.min(preview.rows.length, PREVIEW_ROWS)} of{" "}
+                {preview.totalRows} rows)
               </p>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs">
+            <div className="overflow-x-auto text-left">
+              <table className="w-full text-xs text-left">
                 <thead>
-                  <tr className="border-b border-border">
-                    <th className="px-3 py-2 text-left font-medium text-muted-foreground">
+                  <tr className="border-b border-border text-left">
+                    <th className="px-3 py-2 text-left font-semibold text-muted-foreground">
                       #
                     </th>
                     {preview.headers.map((h) => (
                       <th
                         key={h}
                         className={cn(
-                          "whitespace-nowrap px-3 py-2 text-left font-medium",
+                          "whitespace-nowrap px-3 py-2 text-left font-semibold",
                           REQUIRED_COLUMNS.includes(h)
                             ? "text-foreground"
                             : "text-muted-foreground",
@@ -379,7 +379,7 @@ export default function AdminImportPage() {
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border">
+                <tbody className="divide-y divide-border text-left">
                   {preview.rows.map((row, i) => (
                     <tr key={i} className="hover:bg-muted/20">
                       <td className="px-3 py-2 text-muted-foreground">{i + 2}</td>
@@ -403,27 +403,27 @@ export default function AdminImportPage() {
 
           {/* Import button */}
           <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground text-left">
               {canImport
-                ? "File siap diimpor. Klik tombol di bawah untuk melanjutkan."
+                ? "File is ready to import. Click the button below to proceed."
                 : missingColumns.length > 0
-                  ? "Perbaiki kolom yang hilang sebelum mengimpor."
+                  ? "Fix missing columns before importing."
                   : ""}
             </p>
             <Button
               onClick={handleImport}
               disabled={!canImport}
-              className="gap-2"
+              className="gap-2 font-semibold"
             >
               {importing ? (
                 <>
                   <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                  Mengimpor...
+                  Importing...
                 </>
               ) : (
                 <>
                   <Upload className="h-3.5 w-3.5" />
-                  Import {preview.totalRows} Baris
+                  Import {preview.totalRows} Rows
                 </>
               )}
             </Button>
@@ -433,13 +433,13 @@ export default function AdminImportPage() {
 
       {/* Import error */}
       {importErrorMsg && (
-        <div className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4">
+        <div className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-left">
           <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
           <div>
-            <p className="text-sm font-medium text-red-600 dark:text-red-400">
-              Import gagal
+            <p className="text-sm font-semibold text-red-600 dark:text-red-400 text-left">
+              Import failed
             </p>
-            <p className="mt-0.5 text-xs text-red-600/80 dark:text-red-400/80">
+            <p className="mt-0.5 text-xs text-red-600/80 dark:text-red-400/80 text-left">
               {importErrorMsg}
             </p>
           </div>
@@ -450,29 +450,29 @@ export default function AdminImportPage() {
       {importResult && (
         <div className="space-y-4">
           {/* Summary */}
-          <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-5">
+          <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-5 text-left">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-green-500" />
               <p className="text-sm font-semibold text-green-700 dark:text-green-400">
-                Import selesai
+                Import completed
               </p>
             </div>
-            <div className="mt-4 grid grid-cols-3 gap-3">
+            <div className="mt-4 grid grid-cols-3 gap-3 text-left">
               {[
                 {
-                  label: "Total Baris",
+                  label: "Total Rows",
                   value: importResult.totalRows,
-                  accent: "text-foreground",
+                  accent: "text-foreground font-semibold",
                 },
                 {
-                  label: "Berhasil",
+                  label: "Successful",
                   value: importResult.successCount,
-                  accent: "text-green-600 dark:text-green-400",
+                  accent: "text-green-600 dark:text-green-400 font-semibold",
                 },
                 {
-                  label: "Dilewati",
+                  label: "Skipped",
                   value: importResult.skippedRows,
-                  accent: "text-yellow-600 dark:text-yellow-400",
+                  accent: "text-yellow-600 dark:text-yellow-400 font-semibold",
                 },
               ].map((s) => (
                 <div
@@ -492,25 +492,25 @@ export default function AdminImportPage() {
 
           {/* Errors table */}
           {importResult.errors.length > 0 && (
-            <div className="overflow-hidden rounded-xl border border-border bg-card">
+            <div className="overflow-hidden rounded-xl border border-border bg-card text-left">
               <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-4 py-2.5">
                 <AlertCircle className="h-3.5 w-3.5 text-yellow-500" />
-                <p className="text-xs font-medium text-foreground">
-                  {importResult.errors.length} baris dengan masalah
+                <p className="text-xs font-semibold text-foreground">
+                  {importResult.errors.length} problematic rows
                 </p>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs">
+              <div className="overflow-x-auto text-left">
+                <table className="w-full text-xs text-left">
                   <thead>
                     <tr className="border-b border-border">
-                      <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">
-                        Baris
+                      <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">
+                        Row
                       </th>
-                      <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">
+                      <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">
                         NIM
                       </th>
-                      <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">
-                        Alasan
+                      <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">
+                        Reason
                       </th>
                     </tr>
                   </thead>
@@ -520,7 +520,7 @@ export default function AdminImportPage() {
                         <td className="px-4 py-2 font-mono text-muted-foreground">
                           {err.row}
                         </td>
-                        <td className="px-4 py-2 font-mono text-foreground">
+                        <td className="px-4 py-2 font-mono text-foreground font-semibold">
                           {err.nim}
                         </td>
                         <td className="px-4 py-2 text-muted-foreground">
@@ -535,9 +535,9 @@ export default function AdminImportPage() {
           )}
 
           {/* Import again */}
-          <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5">
+          <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5 font-semibold">
             <RefreshCw className="h-3.5 w-3.5" />
-            Import file lain
+            Import another file
           </Button>
         </div>
       )}

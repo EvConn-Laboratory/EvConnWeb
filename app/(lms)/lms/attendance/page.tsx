@@ -21,7 +21,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Absensi Saya — EvConn LMS" };
+export const metadata: Metadata = { title: "My Attendance — EvConn LMS" };
 
 type AttendanceStatus = "present" | "absent" | "excused" | "late";
 
@@ -30,19 +30,19 @@ const STATUS_CONFIG: Record<
   { label: string; className: string }
 > = {
   present: {
-    label: "Hadir",
+    label: "Present",
     className: "bg-teal-500/10 text-teal-600 dark:text-teal-400",
   },
   late: {
-    label: "Terlambat",
+    label: "Late",
     className: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
   },
   absent: {
-    label: "Tidak Hadir",
+    label: "Absent",
     className: "bg-red-500/10 text-red-600 dark:text-red-400",
   },
   excused: {
-    label: "Izin",
+    label: "Excused",
     className: "bg-gray-500/10 text-gray-600 dark:text-gray-400",
   },
 };
@@ -152,22 +152,22 @@ export default async function AttendancePage({
 
   const rateMessage =
     total === 0
-      ? "Belum ada sesi tercatat."
+      ? "No sessions recorded yet."
       : attendanceRate >= 80
-        ? "Kehadiran baik — pertahankan!"
+        ? "Good attendance — keep it up!"
         : attendanceRate >= 60
-          ? "Kehadiran perlu ditingkatkan."
-          : "Perhatian: kehadiran di bawah batas minimum (60%).";
+          ? "Attendance needs improvement."
+          : "Attention: attendance below minimum threshold (60%).";
 
   return (
     <div className="space-y-6">
       {/* ── Page header ───────────────────────────────────────────────────── */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Absensi Saya
+          My Attendance
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Pantau kehadiran Anda di setiap sesi praktikum.
+          Monitor your attendance in every practicum session.
         </p>
       </div>
 
@@ -176,10 +176,10 @@ export default async function AttendancePage({
         <div className="rounded-2xl border border-border bg-card p-12 text-center">
           <BookOpen className="mx-auto mb-3 h-8 w-8 text-muted-foreground/30" />
           <p className="text-sm font-medium text-foreground">
-            Belum ada mata kuliah
+            No courses yet
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Anda belum terdaftar di mata kuliah manapun.
+            You are not enrolled in any courses.
           </p>
         </div>
       ) : (
@@ -244,10 +244,10 @@ export default async function AttendancePage({
                 <div className="mt-4 space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">
-                      Tingkat Kehadiran
+                      Attendance Rate
                     </span>
                     <span className="font-medium text-foreground">
-                      {present + late}/{total} sesi dihitung
+                      {present + late}/{total} sessions counted
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
@@ -268,34 +268,34 @@ export default async function AttendancePage({
                 {(
                   [
                     {
-                      label: "Total Sesi",
+                      label: "Total Sessions",
                       value: total,
                       icon: Calendar,
                       accent:
                         "bg-blue-500/10 text-blue-600 dark:text-blue-400",
                     },
                     {
-                      label: "Hadir",
+                      label: "Present",
                       value: present,
                       icon: UserCheck,
                       accent:
                         "bg-teal-500/10 text-teal-600 dark:text-teal-400",
                     },
                     {
-                      label: "Terlambat",
+                      label: "Late",
                       value: late,
                       icon: Clock,
                       accent:
                         "bg-amber-500/10 text-amber-600 dark:text-amber-400",
                     },
                     {
-                      label: "Tidak Hadir",
+                      label: "Absent",
                       value: absent,
                       icon: UserX,
                       accent: "bg-red-500/10 text-red-600 dark:text-red-400",
                     },
                     {
-                      label: "Izin",
+                      label: "Excused",
                       value: excused,
                       icon: FileText,
                       accent:
@@ -333,18 +333,18 @@ export default async function AttendancePage({
               {/* Per-module attendance table */}
               <div>
                 <h2 className="mb-3 text-base font-semibold text-foreground">
-                  Riwayat Kehadiran per Modul
+                  Attendance History per Module
                 </h2>
 
                 {records.length === 0 ? (
                   <div className="rounded-2xl border border-border bg-card p-12 text-center">
                     <Calendar className="mx-auto mb-3 h-8 w-8 text-muted-foreground/30" />
                     <p className="text-sm font-medium text-foreground">
-                      Belum ada data kehadiran
+                      No attendance data yet
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Data kehadiran akan muncul setelah asisten mencatat
-                      absensi sesi.
+                      Attendance data will appear after the assistant records
+                      the session attendance.
                     </p>
                   </div>
                 ) : (
@@ -355,10 +355,10 @@ export default async function AttendancePage({
                         #
                       </span>
                       <span className="text-xs font-medium text-muted-foreground">
-                        Modul
+                        Module
                       </span>
                       <span className="text-xs font-medium text-muted-foreground">
-                        Tanggal Sesi
+                        Session Date
                       </span>
                       <span className="text-right text-xs font-medium text-muted-foreground">
                         Status
@@ -397,7 +397,7 @@ export default async function AttendancePage({
                             {/* Session date */}
                             <span className="text-xs text-muted-foreground">
                               {new Date(record.sessionDate).toLocaleDateString(
-                                "id-ID",
+                                "en-US",
                                 {
                                   day: "numeric",
                                   month: "short",

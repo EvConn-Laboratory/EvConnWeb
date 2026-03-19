@@ -26,6 +26,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   createAssignmentAction,
   deleteAssignmentAction,
   publishAssignmentAction,
@@ -168,9 +177,9 @@ function AddAssignmentForm({
 
     startTransition(async () => {
       const res = await createAssignmentAction(null, fd);
-      if ("error" in res) { setError(res.error); return; }
+      if (res && "error" in res) { setError(res.error); return; }
       onCreated({
-        id: res.data?.id ?? crypto.randomUUID(),
+        id: (res as any).data?.id ?? crypto.randomUUID(),
         title: title.trim(),
         description: description.trim() || null,
         type,
@@ -188,93 +197,109 @@ function AddAssignmentForm({
     });
   }
 
-  if (!open) {
-    return (
-      <Button size="sm" variant="outline" className="gap-1.5" onClick={() => setOpen(true)}>
-        <Plus className="h-3.5 w-3.5" />
-        Add Assignment
-      </Button>
-    );
-  }
-
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <h3 className="mb-4 text-sm font-semibold text-foreground">Add Assignment</h3>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-1.5">
-          <Label htmlFor="as-title">Title</Label>
-          <Input id="as-title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Pre-lab Quiz — Networking Basics" required />
-        </div>
+    <Dialog open={open} onOpenChange={(v: boolean) => { setOpen(v); if (!v) reset(); }}>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="outline" className="gap-1.5">
+          <Plus className="h-3.5 w-3.5" />
+          Add Assignment
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-xl">
+        <form onSubmit={handleSubmit}>
+          <DialogHeader>
+            <DialogTitle>Add Assignment</DialogTitle>
+            <DialogDescription>
+              Create pre-lab homework, in-lab assignments, or MCQ quizzes.
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="as-desc">
-            Instructions{" "}
-            <span className="text-xs text-muted-foreground font-normal">(optional)</span>
-          </Label>
-          <Input id="as-desc" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Brief description or instructions" />
-        </div>
+          <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-1">
+            <div className="space-y-1.5">
+              <Label htmlFor="as-title" className="text-left block font-semibold">Title</Label>
+              <Input id="as-title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Pre-lab Quiz — Networking Basics" required />
+            </div>
 
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="as-type">Assignment Type</Label>
-            <select id="as-type" value={type} onChange={(e) => setType(e.target.value)} className={SELECT_CLASS}>
-              <option value="tugas_rumah">Pre-lab Homework</option>
-              <option value="tugas_praktikum">In-lab Assignment</option>
-              <option value="study_group_task">Study Group Task</option>
-            </select>
+            <div className="space-y-1.5">
+              <Label htmlFor="as-desc" className="text-left block font-semibold">
+                Instructions <span className="text-xs text-muted-foreground font-normal">(optional)</span>
+              </Label>
+              <textarea
+                id="as-desc"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Brief description or instructions"
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary min-h-[80px] resize-none"
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="as-type" className="text-left block font-semibold">Assignment Type</Label>
+                <select id="as-type" value={type} onChange={(e) => setType(e.target.value)} className={SELECT_CLASS}>
+                  <option value="tugas_rumah">Pre-lab Homework</option>
+                  <option value="tugas_praktikum">In-lab Assignment</option>
+                  <option value="study_group_task">Study Group Task</option>
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="as-format" className="text-left block font-semibold">Submission Format</Label>
+                <select id="as-format" value={format} onChange={(e) => setFormat(e.target.value)} className={SELECT_CLASS}>
+                  <option value="essay_pdf">Essay + PDF Upload</option>
+                  <option value="mcq">Multiple Choice (MCQ)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="as-score" className="text-left block font-semibold">Max Score</Label>
+                <Input id="as-score" type="number" min={1} max={1000} value={maxScore} onChange={(e) => setMaxScore(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="as-deadline" className="text-left block font-semibold">
+                  Deadline <span className="text-xs text-muted-foreground font-normal">(optional)</span>
+                </Label>
+                <Input id="as-deadline" type="datetime-local" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+              </div>
+            </div>
+
+            <div className="space-y-3 rounded-xl border border-border bg-muted/20 p-4 mt-2">
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block text-left mb-1">Status & Behavior</Label>
+              <div className="flex flex-wrap gap-x-6 gap-y-3">
+                <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
+                  <input type="checkbox" checked={isRequired} onChange={(e) => setIsRequired(e.target.checked)} className="h-4 w-4 rounded border-input accent-primary" />
+                  <span className="text-foreground">Required for completion</span>
+                </label>
+                <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
+                  <input type="checkbox" checked={allowResubmit} onChange={(e) => setAllowResubmit(e.target.checked)} className="h-4 w-4 rounded border-input accent-primary" />
+                  <span className="text-foreground">Allow resubmit</span>
+                </label>
+                <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
+                  <input type="checkbox" checked={isPublished} onChange={(e) => setIsPublished(e.target.checked)} className="h-4 w-4 rounded border-input accent-primary" />
+                  <span className="text-foreground">Publish immediately</span>
+                </label>
+              </div>
+            </div>
+
+            {error && (
+              <p className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {error}
+              </p>
+            )}
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="as-format">Submission Format</Label>
-            <select id="as-format" value={format} onChange={(e) => setFormat(e.target.value)} className={SELECT_CLASS}>
-              <option value="essay_pdf">Essay + PDF Upload</option>
-              <option value="mcq">Multiple Choice (MCQ)</option>
-            </select>
-          </div>
-        </div>
 
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="as-score">Max Score</Label>
-            <Input id="as-score" type="number" min={1} max={1000} value={maxScore} onChange={(e) => setMaxScore(e.target.value)} />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="as-deadline">
-              Deadline{" "}
-              <span className="text-xs text-muted-foreground font-normal">(optional)</span>
-            </Label>
-            <Input id="as-deadline" type="datetime-local" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-4">
-          <label className="flex cursor-pointer items-center gap-2 text-sm">
-            <input type="checkbox" checked={isRequired} onChange={(e) => setIsRequired(e.target.checked)} className="h-4 w-4 rounded border-input" />
-            <span className="text-foreground">Required for completion</span>
-          </label>
-          <label className="flex cursor-pointer items-center gap-2 text-sm">
-            <input type="checkbox" checked={allowResubmit} onChange={(e) => setAllowResubmit(e.target.checked)} className="h-4 w-4 rounded border-input" />
-            <span className="text-foreground">Allow resubmit</span>
-          </label>
-          <label className="flex cursor-pointer items-center gap-2 text-sm">
-            <input type="checkbox" checked={isPublished} onChange={(e) => setIsPublished(e.target.checked)} className="h-4 w-4 rounded border-input" />
-            <span className="text-foreground">Publish immediately</span>
-          </label>
-        </div>
-
-        {error && (
-          <p className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
-            <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {error}
-          </p>
-        )}
-
-        <div className="flex justify-end gap-2 pt-1">
-          <Button type="button" variant="ghost" size="sm" onClick={() => { reset(); setOpen(false); }}>Cancel</Button>
-          <Button type="submit" size="sm" disabled={isPending}>
-            {isPending ? "Creating..." : "Create Assignment"}
-          </Button>
-        </div>
-      </form>
-    </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => { reset(); setOpen(false); }} disabled={isPending}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Creating..." : "Create Assignment"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 

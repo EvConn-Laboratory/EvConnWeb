@@ -49,7 +49,7 @@ interface AssignmentData {
 
 function formatDeadline(iso: string | null): string | null {
   if (!iso) return null;
-  return new Date(iso).toLocaleDateString("id-ID", {
+  return new Date(iso).toLocaleDateString("en-US", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -102,7 +102,7 @@ function McqForm({
 
     const unanswered = answerList.filter((a) => !a.selectedOptionId);
     if (unanswered.length > 0) {
-      setError(`Jawab semua ${questions.length} soal terlebih dahulu.`);
+      setError(`Please answer all ${questions.length} questions first.`);
       return;
     }
 
@@ -126,7 +126,7 @@ function McqForm({
             <span className="mr-2 text-muted-foreground">{qi + 1}.</span>
             {q.questionText}
             <span className="ml-2 text-xs text-muted-foreground">
-              ({q.points} poin)
+              ({q.points} pts)
             </span>
           </p>
           <div className="space-y-1.5">
@@ -166,10 +166,10 @@ function McqForm({
 
       {hasSubmission && !canResubmit ? (
         <p className="text-xs text-muted-foreground">
-          Jawaban sudah dikumpulkan. Pengumpulan ulang tidak diizinkan.
+          Submission complete. Resubmission is not permitted.
         </p>
       ) : deadlinePast && !canResubmit ? (
-        <p className="text-xs text-red-500">Deadline telah lewat.</p>
+        <p className="text-xs text-red-500">Deadline has passed.</p>
       ) : (
         <button
           type="button"
@@ -178,10 +178,10 @@ function McqForm({
           className="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isPending
-            ? "Mengirim..."
+            ? "Submitting..."
             : hasSubmission
-              ? "Kirim Ulang"
-              : "Kumpulkan Jawaban"}
+              ? "Resubmit"
+              : "Submit Answers"}
         </button>
       )}
     </div>
@@ -220,7 +220,7 @@ function EssayForm({ assignment }: { assignment: AssignmentData }) {
       | undefined;
 
     if (!res.ok || !payload?.filePath) {
-      throw new Error(payload?.error ?? "Gagal mengunggah file");
+      throw new Error(payload?.error ?? "Failed to upload file");
     }
 
     return payload.filePath;
@@ -237,12 +237,12 @@ function EssayForm({ assignment }: { assignment: AssignmentData }) {
 
       if (file) {
         if (file.type !== "application/pdf") {
-          setError("File harus berformat PDF.");
+          setError("File must be in PDF format.");
           return;
         }
 
         if (file.size > 10 * 1024 * 1024) {
-          setError("Ukuran file maksimal 10 MB.");
+          setError("Maximum file size is 10 MB.");
           return;
         }
 
@@ -251,7 +251,7 @@ function EssayForm({ assignment }: { assignment: AssignmentData }) {
           const filePath = await uploadSubmissionFile(file);
           formData.set("filePath", filePath);
         } catch (e) {
-          setError(e instanceof Error ? e.message : "Gagal mengunggah file");
+          setError(e instanceof Error ? e.message : "Failed to upload file");
           setIsUploading(false);
           return;
         }
@@ -260,7 +260,7 @@ function EssayForm({ assignment }: { assignment: AssignmentData }) {
 
       if (assignment.type === "study_group_task") {
         if (!assignment.groupId) {
-          setError("Anda belum terdaftar ke kelompok study group.");
+          setError("You are not enrolled in a study group yet.");
           return;
         }
 
@@ -294,7 +294,7 @@ function EssayForm({ assignment }: { assignment: AssignmentData }) {
     return (
       <div className="flex items-center gap-2 rounded-lg bg-green-500/10 px-3 py-3 text-sm text-green-600 dark:text-green-400">
         <CheckCircle2 className="h-4 w-4 shrink-0" />
-        Tugas berhasil dikumpulkan.
+        Assignment submitted successfully.
       </div>
     );
   }
@@ -305,21 +305,21 @@ function EssayForm({ assignment }: { assignment: AssignmentData }) {
 
       <div>
         <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-          Jawaban Teks (opsional)
+          Text Answer (optional)
         </label>
         <textarea
           name="textAnswer"
           rows={5}
           defaultValue={assignment.submission?.textAnswer ?? ""}
           disabled={isDisabled}
-          placeholder="Tulis jawaban atau catatan Anda di sini..."
+          placeholder="Write your answer or notes here..."
           className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-60"
         />
       </div>
 
       <div className="space-y-2 rounded-lg border border-border bg-muted/40 px-3 py-3">
         <label className="block text-xs font-medium text-muted-foreground">
-          File PDF (opsional, maks. 10 MB)
+          PDF File (optional, max 10 MB)
         </label>
         <input
           type="file"
@@ -336,7 +336,7 @@ function EssayForm({ assignment }: { assignment: AssignmentData }) {
             className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
           >
             <FileText className="h-3.5 w-3.5" />
-            Lihat file yang telah dikumpulkan
+            View submitted file
           </a>
         )}
       </div>
@@ -362,11 +362,11 @@ function EssayForm({ assignment }: { assignment: AssignmentData }) {
         >
           {isPending
             ? isUploading
-              ? "Mengunggah file..."
-              : "Mengirim..."
+              ? "Uploading file..."
+              : "Submitting..."
             : hasSubmission
-              ? "Kirim Ulang"
-              : "Kumpulkan Tugas"}
+              ? "Resubmit"
+              : "Submit Assignment"}
         </button>
       )}
     </form>
@@ -388,9 +388,9 @@ export function AssignmentPanel({
   } | null>(null);
 
   const typeLabel: Record<string, string> = {
-    tugas_rumah: "Tugas Rumah",
-    tugas_praktikum: "Tugas Praktikum",
-    study_group_task: "Tugas Study Group",
+    tugas_rumah: "Homework",
+    tugas_praktikum: "Practicum Task",
+    study_group_task: "Study Group Task",
   };
 
   const typeColor: Record<string, string> = {
@@ -430,7 +430,7 @@ export function AssignmentPanel({
           </span>
           {assignment.isRequired && (
             <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-[11px] font-medium text-red-600 dark:text-red-400">
-              Wajib
+              Required
             </span>
           )}
         </div>
@@ -446,7 +446,7 @@ export function AssignmentPanel({
         )}
 
         <div className="mt-2 flex flex-wrap gap-4 text-xs text-muted-foreground">
-          <span>Nilai Maks: {assignment.maxScore}</span>
+          <span>Max Score: {assignment.maxScore}</span>
           {deadline && (
             <span
               className={cn(
@@ -456,7 +456,7 @@ export function AssignmentPanel({
             >
               <Clock className="h-3 w-3" />
               Deadline: {deadline}
-              {deadlinePast && " (lewat)"}
+              {deadlinePast && " (past)"}
             </span>
           )}
         </div>
@@ -468,7 +468,7 @@ export function AssignmentPanel({
           <Star className="h-4 w-4 text-green-500" />
           <div className="flex-1">
             <p className="text-xs font-medium text-green-600 dark:text-green-400">
-              Nilai Diterima
+              Grade Received
             </p>
             {assignment.grade.comment && (
               <p className="mt-0.5 text-xs text-muted-foreground">
@@ -491,11 +491,11 @@ export function AssignmentPanel({
           <CheckCircle2 className="h-4 w-4 text-blue-500" />
           <div className="flex-1">
             <p className="text-xs font-medium text-blue-600 dark:text-blue-400">
-              Dikumpulkan
+              Submitted
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground">
               {new Date(assignment.submission!.submittedAt).toLocaleDateString(
-                "id-ID",
+                "en-US",
                 {
                   day: "numeric",
                   month: "long",
@@ -505,11 +505,11 @@ export function AssignmentPanel({
                 },
               )}
               {assignment.submission!.isLate && (
-                <span className="ml-2 text-amber-500">(Terlambat)</span>
+                <span className="ml-2 text-amber-500">(Late)</span>
               )}
             </p>
           </div>
-          <span className="text-xs text-muted-foreground">Menunggu penilaian</span>
+          <span className="text-xs text-muted-foreground">Pending grade</span>
         </div>
       )}
 
@@ -519,10 +519,10 @@ export function AssignmentPanel({
           <Star className="h-4 w-4 text-green-500" />
           <div className="flex-1">
             <p className="text-xs font-medium text-green-600 dark:text-green-400">
-              Otomatis Dinilai
+              Auto Graded
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              {mcqResult.correct}/{mcqResult.total} jawaban benar
+              {mcqResult.correct}/{mcqResult.total} correct answers
             </p>
           </div>
           <span className="text-xl font-bold text-foreground">

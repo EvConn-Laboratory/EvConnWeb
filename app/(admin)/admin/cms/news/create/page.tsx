@@ -54,17 +54,17 @@ export default function CreateNewsArticlePage() {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 text-left">
             <Link
               href="/admin/cms/news"
               className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="h-3 w-3" />
-              Kembali ke daftar
+              Back to list
             </Link>
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-foreground">
-            Buat Artikel Baru
+          <h1 className="text-xl font-bold tracking-tight text-foreground text-left">
+            Create New Article
           </h1>
         </div>
 
@@ -74,33 +74,33 @@ export default function CreateNewsArticlePage() {
             onClick={() => handleSave("draft")}
             disabled={isPending || !title.trim()}
             variant="outline"
-            className="gap-1.5"
+            className="gap-1.5 font-semibold"
           >
             {isPending ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : (
               <Save className="h-3.5 w-3.5" />
             )}
-            Simpan Draft
+            Save Draft
           </Button>
           <Button
             size="sm"
             onClick={() => handleSave("published")}
             disabled={isPending || !title.trim() || !content.trim()}
-            className="gap-1.5"
+            className="gap-1.5 font-semibold"
           >
             {isPending ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : (
               <Eye className="h-3.5 w-3.5" />
             )}
-            Terbitkan
+            Publish
           </Button>
         </div>
       </div>
 
       {error && (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive text-left">
           {error}
         </div>
       )}
@@ -108,9 +108,9 @@ export default function CreateNewsArticlePage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main content */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="title" className="text-xs font-medium">
-              Judul Artikel
+          <div className="space-y-1.5 text-left">
+            <Label htmlFor="title" className="text-xs font-semibold">
+              Article Title
             </Label>
             <Input
               id="title"
@@ -119,31 +119,31 @@ export default function CreateNewsArticlePage() {
                 setTitle(e.target.value);
                 setSlug(slugify(e.target.value));
               }}
-              placeholder="Masukkan judul artikel..."
-              className="h-10"
+              placeholder="Enter article title..."
+              className="h-10 text-sm focus:ring-primary focus:ring-1"
               autoFocus
             />
           </div>
 
-          <div className="space-y-1.5">
-            <Label className="text-xs font-medium">Konten</Label>
+          <div className="space-y-1.5 text-left">
+            <Label className="text-xs font-semibold">Content</Label>
             <RichTextEditor
               content={content}
               onChange={setContent}
-              placeholder="Tulis konten artikel di sini..."
+              placeholder="Write article content here..."
             />
           </div>
         </div>
 
         {/* Sidebar settings */}
         <div className="space-y-4">
-          <div className="rounded-xl border border-border bg-card p-4 space-y-4">
+          <div className="rounded-xl border border-border bg-card p-4 space-y-4 text-left">
             <h3 className="text-sm font-semibold text-foreground">
-              Pengaturan Artikel
+              Article Settings
             </h3>
 
             <div className="space-y-1.5">
-              <Label htmlFor="slug" className="text-xs font-medium">
+              <Label htmlFor="slug" className="text-xs font-semibold">
                 Slug URL
               </Label>
               <Input
@@ -156,25 +156,25 @@ export default function CreateNewsArticlePage() {
                       .replace(/[^a-z0-9-]/g, ""),
                   )
                 }
-                placeholder="url-artikel"
-                className="h-9 font-mono text-xs"
+                placeholder="article-url"
+                className="h-9 font-mono text-xs focus:ring-primary focus:ring-1"
               />
               <p className="text-[11px] text-muted-foreground">
                 /news/
-                <span className="text-foreground">{slug || "url-artikel"}</span>
+                <span className="text-foreground">{slug || "article-url"}</span>
               </p>
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="thumbnail" className="text-xs font-medium">
-                Thumbnail URL (opsional)
+            <div className="space-y-1.5 text-left">
+              <Label htmlFor="thumbnail" className="text-xs font-semibold">
+                Thumbnail URL (optional)
               </Label>
               <Input
                 id="thumbnail"
                 value={thumbnailPath}
                 onChange={(e) => setThumbnailPath(e.target.value)}
                 placeholder="/storage/cms/news/..."
-                className="h-9 text-xs"
+                className="h-9 text-xs focus:ring-primary focus:ring-1"
               />
             </div>
           </div>

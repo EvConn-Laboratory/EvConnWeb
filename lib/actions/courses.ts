@@ -132,21 +132,11 @@ export async function updateCourseAction(
 export async function deleteCourseAction(id: string): Promise<ActionResult> {
   await requireAdmin();
 
-  // Check for active offerings before deleting
-  const activeOfferings = await db
-    .select({ id: courseOfferings.id })
-    .from(courseOfferings)
-    .where(
-      and(eq(courseOfferings.courseId, id), eq(courseOfferings.status, "active")),
-    )
-    .limit(1);
-
-  if (activeOfferings.length > 0)
-    return { error: "Cannot delete a course with active offerings. Close them first." };
-
-  await db.update(courses).set({ isActive: false }).where(eq(courses.id, id));
+  // Force delete course and all cascading offerings/data
+  await db.delete(courses).where(eq(courses.id, id));
 
   revalidatePath("/admin/courses");
+  revalidatePath("/admin/dashboard");
   return { success: true };
 }
 
@@ -195,6 +185,7 @@ export async function createOfferingAction(
     .returning({ id: courseOfferings.id });
 
   revalidatePath("/admin/courses/offerings");
+  revalidatePath("/admin/courses");
   return { success: true, id: created.id };
 }
 
@@ -223,6 +214,7 @@ export async function updateOfferingAction(
     .where(eq(courseOfferings.id, id));
 
   revalidatePath("/admin/courses/offerings");
+  revalidatePath("/admin/courses");
   revalidatePath(`/admin/courses/offerings/${id}`);
   return { success: true };
 }
@@ -230,18 +222,11 @@ export async function updateOfferingAction(
 export async function deleteOfferingAction(id: string): Promise<ActionResult> {
   await requireAdmin();
 
-  const [activeEnrollments] = await db
-    .select({ count: enrollments.id })
-    .from(enrollments)
-    .where(eq(enrollments.offeringId, id))
-    .limit(1);
-
-  if (activeEnrollments)
-    return { error: "Cannot delete an offering that has enrolled students." };
-
+  // Force delete offering and all cascading data (enrollments, assistants, modules, etc.)
   await db.delete(courseOfferings).where(eq(courseOfferings.id, id));
 
   revalidatePath("/admin/courses");
+  revalidatePath("/admin/dashboard");
   return { success: true };
 }
 

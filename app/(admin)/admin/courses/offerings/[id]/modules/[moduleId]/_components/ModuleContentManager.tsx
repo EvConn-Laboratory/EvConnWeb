@@ -28,6 +28,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   createContentItemAction,
   deleteContentItemAction,
   toggleContentItemPublishedAction,
@@ -371,9 +380,9 @@ function AddContentItemForm({
 
     startTransition(async () => {
       const res = await createContentItemAction(null, fd);
-      if ("error" in res) { setError(res.error); return; }
+      if (res && "error" in res) { setError(res.error); return; }
       onCreated({
-        id: res.id ?? crypto.randomUUID(),
+        id: (res as any).id ?? crypto.randomUUID(),
         type,
         title: title.trim(),
         contentData: buildContentData(),
@@ -385,181 +394,182 @@ function AddContentItemForm({
     });
   }
 
-  if (!open) {
-    return (
-      <Button size="sm" variant="outline" className="gap-1.5" onClick={() => setOpen(true)}>
-        <Plus className="h-3.5 w-3.5" />
-        Add Content Item
-      </Button>
-    );
-  }
-
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <h3 className="mb-4 text-sm font-semibold text-foreground">Add Content Item</h3>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Type selector */}
-        <div className="space-y-1.5">
-          <Label htmlFor="ci-type">Content Type</Label>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
-            {(Object.keys(CONTENT_TYPE_CONFIG) as ContentType[]).map((t) => {
-              const cfg = CONTENT_TYPE_CONFIG[t];
-              const Icon = cfg.icon;
-              return (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setType(t)}
-                  className={cn(
-                    "flex flex-col items-center gap-1.5 rounded-lg border px-2 py-2.5 text-center text-xs font-medium transition-colors",
-                    type === t
-                      ? "border-primary bg-primary/8 text-foreground"
-                      : "border-border bg-muted/30 text-muted-foreground hover:bg-muted/60",
+    <Dialog open={open} onOpenChange={(v: boolean) => { setOpen(v); if (!v) reset(); }}>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="outline" className="gap-1.5">
+          <Plus className="h-3.5 w-3.5" />
+          Add Content Item
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-2xl">
+        <form onSubmit={handleSubmit}>
+          <DialogHeader>
+            <DialogTitle>Add Content Item</DialogTitle>
+            <DialogDescription>
+              Add PDFs, slides, videos, links, or assignment references to this module.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-1">
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block text-left">Content Type</Label>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                {(Object.keys(CONTENT_TYPE_CONFIG) as ContentType[]).map((t) => {
+                  const cfg = CONTENT_TYPE_CONFIG[t];
+                  const Icon = cfg.icon;
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setType(t)}
+                      className={cn(
+                        "flex flex-col items-center gap-1.5 rounded-xl border p-3 text-center transition-all",
+                        type === t
+                          ? "border-primary bg-primary/10 text-primary shadow-sm"
+                          : "border-border bg-muted/30 text-muted-foreground hover:bg-muted/60"
+                      )}
+                    >
+                      <Icon className={cn("h-5 w-5", type === t && cfg.color)} />
+                      <span className="text-[10px] font-bold leading-tight">{cfg.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label htmlFor="ci-title" className="text-left block">Title</Label>
+                <Input id="ci-title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Module 1 Slides" required />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="ci-order" className="text-left block">Order</Label>
+                <Input id="ci-order" type="number" min={0} value={orderIndex} onChange={(e) => setOrderIndex(e.target.value)} />
+              </div>
+              <div className="flex items-center gap-2 pt-6">
+                <input
+                  type="checkbox"
+                  id="ci-pub"
+                  checked={isPublished}
+                  onChange={(e) => setIsPublished(e.target.checked)}
+                  className="h-4 w-4 rounded border-input accent-primary"
+                />
+                <Label htmlFor="ci-pub" className="text-sm font-medium cursor-pointer">Publish immediately</Label>
+              </div>
+            </div>
+
+            <div className="space-y-4 rounded-xl border border-border bg-muted/20 p-4">
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block text-left">Data Configuration</Label>
+
+              {(type === "pdf_material" || type === "slide_material") && (
+                <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-left block">Upload File</Label>
+                    <FileUploadField
+                      accept={type === "pdf_material" ? ".pdf,application/pdf" : ".pdf,.ppt,.pptx,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"}
+                      label={type === "pdf_material" ? "Click to upload PDF" : "Click to upload PDF or Presentation"}
+                      onUploaded={(path, size) => { setFilePath(path); setFileSize(size); }}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="ci-filepath" className="text-left block">
+                      Or manual path <span className="text-xs text-muted-foreground font-normal">(optional if uploaded)</span>
+                    </Label>
+                    <Input
+                      id="ci-filepath"
+                      value={filePath}
+                      onChange={(e) => setFilePath(e.target.value)}
+                      placeholder="/uploads/materials/2026/01/file.pdf"
+                    />
+                  </div>
+                  {type === "pdf_material" ? (
+                    <div className="space-y-1.5">
+                      <Label htmlFor="ci-pages" className="text-left block">Page Count <span className="text-muted-foreground font-normal">(optional)</span></Label>
+                      <Input id="ci-pages" type="number" min={1} value={pageCount} onChange={(e) => setPageCount(e.target.value)} placeholder="e.g. 12" />
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      <Label htmlFor="ci-slides" className="text-left block">Slide Count <span className="text-muted-foreground font-normal">(optional)</span></Label>
+                      <Input id="ci-slides" type="number" min={1} value={slideCount} onChange={(e) => setSlideCount(e.target.value)} placeholder="e.g. 20" />
+                    </div>
                   )}
-                >
-                  <Icon className={cn("h-4 w-4", type === t && cfg.color)} />
-                  {cfg.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+                </div>
+              )}
 
-        {/* Common: title + order + published */}
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-1.5 sm:col-span-2">
-            <Label htmlFor="ci-title">Title</Label>
-            <Input id="ci-title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Module 1 Slides" required />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="ci-order">Order</Label>
-            <Input id="ci-order" type="number" min={0} value={orderIndex} onChange={(e) => setOrderIndex(e.target.value)} />
-          </div>
-          <div className="flex items-end pb-0.5">
-            <label className="flex cursor-pointer items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={isPublished}
-                onChange={(e) => setIsPublished(e.target.checked)}
-                className="h-4 w-4 rounded border-input"
-              />
-              <span className="text-foreground">Publish immediately</span>
-            </label>
-          </div>
-        </div>
+              {type === "video_embed" && (
+                <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="ci-embed" className="text-left block">Embed URL</Label>
+                    <Input id="ci-embed" value={embedUrl} onChange={(e) => setEmbedUrl(e.target.value)} placeholder="https://www.youtube.com/embed/..." required />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="ci-duration" className="text-left block">Duration (seconds) <span className="text-muted-foreground font-normal">(optional)</span></Label>
+                    <Input id="ci-duration" type="number" min={0} value={durationSeconds} onChange={(e) => setDurationSeconds(e.target.value)} placeholder="e.g. 300" />
+                  </div>
+                </div>
+              )}
 
-        {/* Type-specific fields */}
-        {(type === "pdf_material" || type === "slide_material") && (
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <Label>Upload File</Label>
-              <FileUploadField
-                accept={type === "pdf_material" ? ".pdf,application/pdf" : ".pdf,.ppt,.pptx,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"}
-                label={type === "pdf_material" ? "Click to upload PDF" : "Click to upload PDF or Presentation"}
-                onUploaded={(path, size) => { setFilePath(path); setFileSize(size); }}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="ci-filepath">
-                Or enter file path manually{" "}
-                <span className="text-xs text-muted-foreground font-normal">(optional if uploaded)</span>
-              </Label>
-              <Input
-                id="ci-filepath"
-                value={filePath}
-                onChange={(e) => setFilePath(e.target.value)}
-                placeholder="/uploads/materials/2026/01/file.pdf"
-              />
-            </div>
-            {type === "pdf_material" ? (
-              <div className="space-y-1.5">
-                <Label htmlFor="ci-pages">
-                  Page Count{" "}
-                  <span className="text-xs text-muted-foreground font-normal">(optional)</span>
-                </Label>
-                <Input id="ci-pages" type="number" min={1} value={pageCount} onChange={(e) => setPageCount(e.target.value)} placeholder="e.g. 12" />
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                <Label htmlFor="ci-slides">
-                  Slide Count{" "}
-                  <span className="text-xs text-muted-foreground font-normal">(optional)</span>
-                </Label>
-                <Input id="ci-slides" type="number" min={1} value={slideCount} onChange={(e) => setSlideCount(e.target.value)} placeholder="e.g. 20" />
-              </div>
-            )}
-          </div>
-        )}
+              {type === "external_link" && (
+                <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="ci-url" className="text-left block">URL</Label>
+                    <Input id="ci-url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." required />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="ci-newtab"
+                      checked={openInNewTab}
+                      onChange={(e) => setOpenInNewTab(e.target.checked)}
+                      className="h-4 w-4 rounded border-input accent-primary"
+                    />
+                    <Label htmlFor="ci-newtab" className="text-sm font-medium cursor-pointer">Open in new tab</Label>
+                  </div>
+                </div>
+              )}
 
-        {type === "video_embed" && (
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="ci-embed">Embed URL</Label>
-              <Input id="ci-embed" value={embedUrl} onChange={(e) => setEmbedUrl(e.target.value)} placeholder="https://www.youtube.com/embed/..." required />
+              {type === "assignment_reference" && (
+                <div className="space-y-2">
+                  <Label htmlFor="ci-assignment" className="text-left block">Assignment Selection</Label>
+                  {assignments.length === 0 ? (
+                    <p className="text-xs text-muted-foreground italic">No assignments in this module yet.</p>
+                  ) : (
+                    <select id="ci-assignment" value={assignmentId} onChange={(e) => setAssignmentId(e.target.value)} className={SELECT_CLASS}>
+                      {assignments.map((a) => (
+                        <option key={a.id} value={a.id}>
+                          {a.title} ({a.type.replace("_", " ")} · {a.format})
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              )}
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="ci-duration">
-                Duration (seconds){" "}
-                <span className="text-xs text-muted-foreground font-normal">(optional)</span>
-              </Label>
-              <Input id="ci-duration" type="number" min={0} value={durationSeconds} onChange={(e) => setDurationSeconds(e.target.value)} placeholder="e.g. 300" />
-            </div>
-          </div>
-        )}
 
-        {type === "external_link" && (
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="ci-url">URL</Label>
-              <Input id="ci-url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." required />
-            </div>
-            <label className="flex cursor-pointer items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={openInNewTab}
-                onChange={(e) => setOpenInNewTab(e.target.checked)}
-                className="h-4 w-4 rounded border-input"
-              />
-              <span className="text-foreground">Open in new tab</span>
-            </label>
-          </div>
-        )}
-
-        {type === "assignment_reference" && (
-          <div className="space-y-1.5">
-            <Label htmlFor="ci-assignment">Assignment</Label>
-            {assignments.length === 0 ? (
-              <p className="text-xs text-muted-foreground">
-                No assignments in this module yet. Create an assignment first.
+            {error && (
+              <p className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {error}
               </p>
-            ) : (
-              <select id="ci-assignment" value={assignmentId} onChange={(e) => setAssignmentId(e.target.value)} className={SELECT_CLASS}>
-                {assignments.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.title} ({a.type.replace("_", " ")} · {a.format})
-                  </option>
-                ))}
-              </select>
             )}
           </div>
-        )}
 
-        {error && (
-          <p className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
-            <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {error}
-          </p>
-        )}
-
-        <div className="flex justify-end gap-2 pt-1">
-          <Button type="button" variant="ghost" size="sm" onClick={() => { reset(); setOpen(false); }}>
-            Cancel
-          </Button>
-          <Button type="submit" size="sm" disabled={isPending}>
-            {isPending ? "Adding..." : "Add Item"}
-          </Button>
-        </div>
-      </form>
-    </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => { reset(); setOpen(false); }}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Adding..." : "Add Content Item"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 

@@ -3,7 +3,7 @@ import { courseOfferings } from "./courses";
 
 export const groups = pgTable("groups", {
   id: uuid("id").primaryKey().defaultRandom(),
-  offeringId: uuid("offering_id").notNull().references(() => courseOfferings.id),
+  offeringId: uuid("offering_id").notNull().references(() => courseOfferings.id, { onDelete: "cascade" }),
   number: integer("number").notNull(),
   name: text("name"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -13,7 +13,7 @@ export const groups = pgTable("groups", {
 
 export const groupAssistants = pgTable("group_assistants", {
   id: uuid("id").primaryKey().defaultRandom(),
-  groupId: uuid("group_id").notNull().references(() => groups.id),
+  groupId: uuid("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
   assistantId: uuid("assistant_id").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });

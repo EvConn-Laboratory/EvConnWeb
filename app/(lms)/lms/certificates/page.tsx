@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Sertifikat Saya — EvConn LMS" };
+export const metadata: Metadata = { title: "My Certificates — EvConn LMS" };
 
 export default async function StudentCertificatesPage() {
   const session = await getSession();
@@ -46,24 +46,24 @@ export default async function StudentCertificatesPage() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Sertifikat Saya
+            My Certificates
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Sertifikat yang Anda raih setelah menyelesaikan seluruh modul.
+            Certificates you have earned after completing all modules.
           </p>
         </div>
         {studentCerts.length > 0 && (
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <span>
               <span className="font-semibold text-foreground">{totalActive}</span>{" "}
-              aktif
+              active
             </span>
             {totalRevoked > 0 && (
               <span>
                 <span className="font-semibold text-red-600 dark:text-red-400">
                   {totalRevoked}
                 </span>{" "}
-                dicabut
+                revoked
               </span>
             )}
           </div>
@@ -77,16 +77,16 @@ export default async function StudentCertificatesPage() {
             <Award className="h-7 w-7" />
           </div>
           <p className="text-base font-semibold text-foreground">
-            Belum ada sertifikat
+            No certificates yet
           </p>
           <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-            Selesaikan semua modul untuk mendapatkan sertifikat penyelesaian
-            dari EvConn Laboratory.
+            Complete all modules to receive a certificate of completion from
+            EvConn Laboratory.
           </p>
           <Button variant="outline" size="sm" className="mt-5" asChild>
             <Link href="/lms/dashboard">
               <GraduationCap className="h-4 w-4" />
-              Lihat Mata Kuliah Saya
+              View My Courses
             </Link>
           </Button>
         </div>
@@ -125,7 +125,7 @@ export default async function StudentCertificatesPage() {
                         : "bg-green-500/10 text-green-600 dark:text-green-400",
                     )}
                   >
-                    {isRevoked ? "Dicabut" : "Aktif"}
+                    {isRevoked ? "Revoked" : "Active"}
                   </span>
                 </div>
 
@@ -142,8 +142,8 @@ export default async function StudentCertificatesPage() {
                     {cert.certificateNumber}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Diterbitkan:{" "}
-                    {new Date(cert.issuedAt).toLocaleDateString("id-ID", {
+                    Issued:{" "}
+                    {new Date(cert.issuedAt).toLocaleDateString("en-US", {
                       day: "numeric",
                       month: "long",
                       year: "numeric",
@@ -151,7 +151,7 @@ export default async function StudentCertificatesPage() {
                   </p>
                   {isRevoked && cert.revokedReason && (
                     <p className="pt-1 text-xs text-red-600 dark:text-red-400">
-                      Alasan: {cert.revokedReason}
+                      Reason: {cert.revokedReason}
                     </p>
                   )}
                 </div>
@@ -171,7 +171,7 @@ export default async function StudentCertificatesPage() {
                         rel="noopener noreferrer"
                       >
                         <Shield className="h-3.5 w-3.5" />
-                        Verifikasi
+                        Verify
                       </Link>
                     </Button>
                     {cert.filePath ? (
@@ -183,7 +183,7 @@ export default async function StudentCertificatesPage() {
                       >
                         <a href={cert.filePath} download>
                           <Download className="h-3.5 w-3.5" />
-                          Unduh
+                          Download
                         </a>
                       </Button>
                     ) : (
@@ -194,7 +194,7 @@ export default async function StudentCertificatesPage() {
                         disabled
                       >
                         <Download className="h-3.5 w-3.5" />
-                        Unduh
+                        Download
                       </Button>
                     )}
                   </div>

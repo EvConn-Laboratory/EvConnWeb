@@ -35,6 +35,14 @@ export const metadata: Metadata = {
   },
   description:
     "The integrated digital platform for EvConn Laboratory — practical learning, study groups, and laboratory management.",
+  icons: {
+    icon: [
+      { url: "/evconn-dark.png", type: "image/png" },
+      { url: "/favicon.ico" },
+    ],
+    shortcut: [{ url: "/evconn-dark.png", type: "image/png" }],
+    apple: [{ url: "/evconn-dark.png", type: "image/png" }],
+  },
   keywords: ["laboratory", "praktikum", "LMS", "study group", "evconn"],
   authors: [{ name: "EvConn Laboratory" }],
   openGraph: {

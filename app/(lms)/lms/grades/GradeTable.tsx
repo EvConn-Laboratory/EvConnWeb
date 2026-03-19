@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 import type { GradeRow } from "./page";
 
 const TYPE_LABEL: Record<string, string> = {
-  tugas_rumah: "Tugas Rumah",
-  tugas_praktikum: "Tugas Praktikum",
+  tugas_rumah: "Homework",
+  tugas_praktikum: "Practicum Task",
   study_group_task: "Study Group",
 };
 
@@ -20,20 +20,20 @@ function StatusBadge({ row }: { row: GradeRow }) {
   if (row.score !== null && row.gradeStatus === "published") {
     return (
       <span className="rounded-full bg-green-500/10 px-2.5 py-0.5 text-xs font-medium text-green-400">
-        Dinilai
+        Graded
       </span>
     );
   }
   if (row.submittedAt) {
     return (
       <span className="rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs font-medium text-blue-400">
-        Menunggu
+        Pending
       </span>
     );
   }
   return (
     <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-      Belum dikumpul
+      Not Submitted
     </span>
   );
 }
@@ -49,7 +49,7 @@ export function GradeTable({
     return (
       <div className="rounded-xl border border-border bg-card px-6 py-10 text-center">
         <p className="text-sm text-muted-foreground">
-          Belum ada tugas untuk mata kuliah ini.
+          No assignments for this course yet.
         </p>
       </div>
     );
@@ -62,16 +62,16 @@ export function GradeTable({
           <thead>
             <tr className="border-b border-border">
               <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Tugas
+                Assignment
               </th>
               <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Modul
+                Module
               </th>
               <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Status
               </th>
               <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Nilai
+                Grade
               </th>
             </tr>
           </thead>

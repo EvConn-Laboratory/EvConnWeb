@@ -20,7 +20,7 @@ import { eq, and, asc, inArray } from "drizzle-orm";
 import { ContentList } from "./ContentList";
 import { FeedbackSection } from "./FeedbackSection";
 
-export const metadata = { title: "Modul" };
+export const metadata = { title: "Module" };
 
 export default async function ModuleDetailPage({
   params,
@@ -407,7 +407,7 @@ export default async function ModuleDetailPage({
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-xs text-muted-foreground">
         <Link href="/lms/courses" className="hover:text-foreground transition-colors">
-          Mata Kuliah
+          Courses
         </Link>
         <span>/</span>
         <Link
@@ -417,7 +417,7 @@ export default async function ModuleDetailPage({
           {courseName}
         </Link>
         <span>/</span>
-        <span className="text-foreground">Modul {module.orderIndex + 1}</span>
+        <span className="text-foreground">Module {module.orderIndex + 1}</span>
       </nav>
 
       {/* Module header */}
@@ -450,16 +450,16 @@ export default async function ModuleDetailPage({
                 }
               >
                 {module.status === "open"
-                  ? "Dibuka"
+                  ? "Open"
                   : module.status === "scheduled"
-                    ? "Terjadwal"
+                    ? "Scheduled"
                     : module.status === "closed"
-                      ? "Ditutup"
+                      ? "Closed"
                       : "Draft"}
               </span>
               {isModuleComplete && (
                 <span className="inline-flex items-center rounded-full bg-green-500/10 px-2 py-0.5 text-[11px] font-medium text-green-600 dark:text-green-400">
-                  Selesai
+                  Complete
                 </span>
               )}
             </div>
@@ -472,8 +472,8 @@ export default async function ModuleDetailPage({
             <div className="flex flex-wrap gap-4 pt-1 text-xs text-muted-foreground">
               {module.openDatetime && (
                 <span>
-                  Buka:{" "}
-                  {new Date(module.openDatetime).toLocaleDateString("id-ID", {
+                  Opens:{" "}
+                  {new Date(module.openDatetime).toLocaleDateString("en-US", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
@@ -484,8 +484,8 @@ export default async function ModuleDetailPage({
               )}
               {module.closeDatetime && (
                 <span>
-                  Tutup:{" "}
-                  {new Date(module.closeDatetime).toLocaleDateString("id-ID", {
+                  Closes:{" "}
+                  {new Date(module.closeDatetime).toLocaleDateString("en-US", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
@@ -503,7 +503,7 @@ export default async function ModuleDetailPage({
       {serializedItems.length === 0 ? (
         <div className="flex items-center justify-center rounded-2xl border border-border bg-card py-12 text-center">
           <p className="text-sm text-muted-foreground">
-            Belum ada konten untuk modul ini.
+            No content available for this module.
           </p>
         </div>
       ) : (

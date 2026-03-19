@@ -30,9 +30,9 @@ export type AssignmentListItem = {
 };
 
 const TYPE_LABEL: Record<string, string> = {
-  tugas_rumah: "Tugas Rumah",
-  tugas_praktikum: "Tugas Praktikum",
-  study_group_task: "Study Group",
+  tugas_rumah: "Homework",
+  tugas_praktikum: "Practicum Task",
+  study_group_task: "Study Group Task",
 };
 
 const TYPE_COLOR: Record<string, string> = {
@@ -62,10 +62,10 @@ function DeadlineTag({ deadline, isLate }: { deadline: string | null; isLate: bo
     >
       <Clock className="h-3 w-3" />
       {isPast
-        ? "Tutup"
+        ? "Closed"
         : isUrgent
-          ? `${Math.ceil(hoursLeft)}j lagi`
-          : d.toLocaleDateString("id-ID", {
+          ? `${Math.ceil(hoursLeft)}h left`
+          : d.toLocaleDateString("en-US", {
               day: "numeric",
               month: "short",
               year: "numeric",
@@ -115,7 +115,7 @@ function AssignmentCard({
                 </span>
                 {item.isRequired && (
                   <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-[10px] font-medium text-red-600 dark:text-red-400">
-                    Wajib
+                    Required
                   </span>
                 )}
               </div>
@@ -149,17 +149,17 @@ function AssignmentCard({
                       </span>
                     )}
                   </div>
-                  <span className="text-[10px] text-green-600 dark:text-green-400">Dinilai</span>
+                  <span className="text-[10px] text-green-600 dark:text-green-400">Graded</span>
                 </div>
               ) : isPending ? (
                 <div className="flex flex-col items-end gap-0.5">
                   <CheckCircle2 className="h-4 w-4 text-blue-500" />
-                  <span className="text-[10px] text-blue-600 dark:text-blue-400">Dikumpulkan</span>
+                  <span className="text-[10px] text-blue-600 dark:text-blue-400">Submitted</span>
                 </div>
               ) : (
                 <div className="flex flex-col items-end gap-0.5">
                   <AlertCircle className="h-4 w-4 text-muted-foreground/50" />
-                  <span className="text-[10px] text-muted-foreground">Belum</span>
+                  <span className="text-[10px] text-muted-foreground">Not Submitted</span>
                 </div>
               )}
               <ChevronRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
@@ -178,9 +178,9 @@ export function AssignmentList({ items }: { items: AssignmentListItem[] }) {
         <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
           <ClipboardList className="h-6 w-6" />
         </div>
-        <p className="text-sm font-semibold text-foreground">Belum ada tugas</p>
+        <p className="text-sm font-semibold text-foreground">No assignments yet</p>
         <p className="mt-1 text-xs text-muted-foreground">
-          Tugas akan muncul di sini setelah asisten menerbitkannya.
+          Assignments will appear here once published by an assistant.
         </p>
       </div>
     );

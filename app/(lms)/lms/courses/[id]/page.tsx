@@ -11,7 +11,7 @@ import {
 import { eq, and } from "drizzle-orm";
 import { ModuleList } from "./ModuleList";
 
-export const metadata = { title: "Detail Mata Kuliah" };
+export const metadata = { title: "Course Details" };
 
 export default async function CourseDetailPage({
   params,
@@ -69,7 +69,7 @@ export default async function CourseDetailPage({
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-xs text-muted-foreground">
         <Link href="/lms/courses" className="hover:text-foreground transition-colors">
-          Mata Kuliah
+          Courses
         </Link>
         <span>/</span>
         <span className="text-foreground">{course.name}</span>
@@ -110,7 +110,7 @@ export default async function CourseDetailPage({
                 /{moduleList.length}
               </span>
             </p>
-            <p className="text-xs text-muted-foreground">modul selesai</p>
+            <p className="text-xs text-muted-foreground">modules completed</p>
           </div>
         </div>
 
@@ -126,7 +126,7 @@ export default async function CourseDetailPage({
               />
             </div>
             <p className="text-xs text-muted-foreground text-right">
-              {Math.round((completedCount / moduleList.length) * 100)}% selesai
+              {Math.round((completedCount / moduleList.length) * 100)}% completed
             </p>
           </div>
         )}
@@ -135,12 +135,12 @@ export default async function CourseDetailPage({
       {/* Module list */}
       <section>
         <h2 className="mb-4 text-base font-semibold text-foreground">
-          Daftar Modul
+          Module List
         </h2>
         {moduleList.length === 0 ? (
           <div className="flex items-center justify-center rounded-2xl border border-border bg-card py-12 text-center">
             <p className="text-sm text-muted-foreground">
-              Belum ada modul untuk mata kuliah ini.
+              No modules available for this course.
             </p>
           </div>
         ) : (

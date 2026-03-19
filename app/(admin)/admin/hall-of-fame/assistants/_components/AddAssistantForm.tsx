@@ -4,6 +4,15 @@ import { useState, useTransition } from "react";
 import { Plus, AlertCircle } from "lucide-react";
 import { createAssistantProfileAction } from "@/lib/actions/personnel";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 interface Generation {
@@ -29,11 +38,11 @@ export function AddAssistantForm({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  function handleSubmit(formData: FormData) {
+  async function handleSubmit(formData: FormData) {
     setError(null);
     startTransition(async () => {
       const res = await createAssistantProfileAction(null, formData);
-      if ("error" in res) {
+      if (res && "error" in res) {
         setError(res.error);
         return;
       }
@@ -43,155 +52,154 @@ export function AddAssistantForm({
   }
 
   return (
-    <div className="flex flex-col items-end gap-2">
-      <Button size="sm" className="gap-1.5" onClick={() => setOpen((v) => !v)}>
-        <Plus className="h-3.5 w-3.5" />
-        Add Assistant
-      </Button>
+    <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setError(null); }}>
+      <DialogTrigger asChild>
+        <Button size="sm" className="gap-1.5" onClick={() => setOpen((v) => !v)}>
+          <Plus className="h-3.5 w-3.5" />
+          Add Assistant
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <form action={handleSubmit}>
+          <DialogHeader>
+            <DialogTitle>New Assistant Profile</DialogTitle>
+            <DialogDescription>
+              Create a new assistant profile for the Hall of Fame.
+            </DialogDescription>
+          </DialogHeader>
 
-      {open && (
-        <form
-          action={handleSubmit}
-          className="w-full max-w-sm space-y-3 rounded-xl border border-border bg-card p-4 shadow-sm"
-        >
-          <p className="text-xs font-semibold text-foreground">New Assistant Profile</p>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-foreground">Full Name</label>
-            <input
-              name="fullName"
-              required
-              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground"
-              placeholder="Full name"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-foreground">
-              Link to User Account <span className="text-muted-foreground">(optional)</span>
-            </label>
-            <select
-              name="userId"
-              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground"
-            >
-              <option value="">— No link —</option>
-              {usersForLinking.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.name} {u.email ? `(${u.email})` : ""}
-                </option>
-              ))}
-            </select>
-            <p className="text-[11px] text-muted-foreground">
-              Link to an existing user so they appear in Users and can be assigned to offerings.
-            </p>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-foreground">Generation</label>
-            <select
-              name="generationId"
-              required
-              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground"
-            >
-              <option value="">Select generation…</option>
-              {generations.map((g) => (
-                <option key={g.id} value={g.id}>
-                  G{g.number} — {g.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-1">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-foreground">Joined Year</label>
+              <label className="text-xs font-medium text-foreground block text-left">Full Name</label>
               <input
-                name="joinedYear"
-                type="number"
-                min={2000}
-                max={2100}
+                name="fullName"
                 required
-                className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground"
-                placeholder="2024"
+                className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                placeholder="Full name"
               />
             </div>
+
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-foreground">Status</label>
+              <label className="text-xs font-medium text-foreground block text-left">
+                Link to User Account <span className="text-muted-foreground text-left block">(optional)</span>
+              </label>
               <select
-                name="status"
-                defaultValue="active"
-                className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground"
+                name="userId"
+                className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
               >
-                <option value="active">Active</option>
-                <option value="alumni">Alumni</option>
+                <option value="">— No link —</option>
+                {usersForLinking.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.name} {u.email ? `(${u.email})` : ""}
+                  </option>
+                ))}
+              </select>
+              <p className="text-[10px] text-muted-foreground text-left">
+                Link to an existing user so they appear in Users and can be assigned to offerings.
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-foreground block text-left">Generation</label>
+              <select
+                name="generationId"
+                required
+                className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              >
+                <option value="">Select generation…</option>
+                {generations.map((g) => (
+                  <option key={g.id} value={g.id}>
+                    G{g.number} — {g.name}
+                  </option>
+                ))}
               </select>
             </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-foreground block text-left">Joined Year</label>
+                <input
+                  name="joinedYear"
+                  type="number"
+                  min={2000}
+                  max={2100}
+                  required
+                  className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  placeholder="2024"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-foreground block text-left">Status</label>
+                <select
+                  name="status"
+                  defaultValue="active"
+                  className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                >
+                  <option value="active">Active</option>
+                  <option value="alumni">Alumni</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-foreground block text-left">
+                GitHub URL <span className="text-muted-foreground">(optional)</span>
+              </label>
+              <input
+                name="githubUrl"
+                type="url"
+                className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder-text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                placeholder="https://github.com/..."
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-foreground block text-left">
+                Instagram URL <span className="text-muted-foreground">(optional)</span>
+              </label>
+              <input
+                name="instagramUrl"
+                type="url"
+                className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder-text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                placeholder="https://instagram.com/..."
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-foreground block text-left">
+                LinkedIn URL <span className="text-muted-foreground">(optional)</span>
+              </label>
+              <input
+                name="linkedinUrl"
+                type="url"
+                className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder-text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                placeholder="https://linkedin.com/in/..."
+              />
+            </div>
+
+            {error && (
+              <p className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                {error}
+              </p>
+            )}
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-foreground">
-              GitHub URL <span className="text-muted-foreground">(optional)</span>
-            </label>
-            <input
-              name="githubUrl"
-              type="url"
-              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground"
-              placeholder="https://github.com/..."
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-foreground">
-              Instagram URL <span className="text-muted-foreground">(optional)</span>
-            </label>
-            <input
-              name="instagramUrl"
-              type="url"
-              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground"
-              placeholder="https://instagram.com/..."
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-foreground">
-              LinkedIn URL <span className="text-muted-foreground">(optional)</span>
-            </label>
-            <input
-              name="linkedinUrl"
-              type="url"
-              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground"
-              placeholder="https://linkedin.com/in/..."
-            />
-          </div>
-
-          {error && (
-            <p className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
-              <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-              {error}
-            </p>
-          )}
-
-          <div className="flex justify-end gap-2">
-            <button
+          <DialogFooter>
+            <Button
               type="button"
-              onClick={() => { setOpen(false); setError(null); }}
-              className="inline-flex h-8 items-center rounded-md border border-border px-3 text-xs font-medium text-muted-foreground hover:bg-muted"
+              variant="outline"
+              onClick={() => setOpen(false)}
+              disabled={isPending}
             >
               Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isPending}
-              className={cn(
-                "inline-flex h-8 items-center rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground",
-                isPending && "opacity-60",
-              )}
-            >
-              {isPending ? "Saving..." : "Save"}
-            </button>
-          </div>
+            </Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Saving..." : "Save Assistant"}
+            </Button>
+          </DialogFooter>
         </form>
-      )}
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

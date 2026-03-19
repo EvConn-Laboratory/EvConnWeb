@@ -29,7 +29,7 @@ interface ModuleRow {
 
 function formatDate(iso: string | null): string | null {
   if (!iso) return null;
-  return new Date(iso).toLocaleDateString("id-ID", {
+  return new Date(iso).toLocaleDateString("en-US", {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -48,15 +48,15 @@ function StatusBadge({ status }: { status: ModuleStatus }) {
       className: "bg-muted text-muted-foreground",
     },
     scheduled: {
-      label: "Terjadwal",
+      label: "Scheduled",
       className: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
     },
     open: {
-      label: "Dibuka",
+      label: "Open",
       className: "bg-green-500/10 text-green-600 dark:text-green-400",
     },
     closed: {
-      label: "Ditutup",
+      label: "Closed",
       className: "bg-red-500/10 text-red-600 dark:text-red-400",
     },
   };
@@ -134,13 +134,13 @@ function ModuleRow({
             {mod.openDatetime && (
               <span className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
-                Buka: {formatDate(mod.openDatetime)}
+                Opens: {formatDate(mod.openDatetime)}
               </span>
             )}
             {mod.closeDatetime && (
               <span className="flex items-center gap-1">
                 <AlarmClock className="h-3 w-3" />
-                Tutup: {formatDate(mod.closeDatetime)}
+                Closes: {formatDate(mod.closeDatetime)}
               </span>
             )}
           </div>

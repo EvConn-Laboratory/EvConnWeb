@@ -43,7 +43,7 @@ function FeedbackCard({
 
   function handleSubmit() {
     if (state.rating === 0) {
-      setState((s) => ({ ...s, error: "Pilih rating terlebih dahulu (1-5 bintang)." }));
+      setState((s) => ({ ...s, error: "Please select a rating first (1-5 stars)." }));
       return;
     }
 
@@ -74,7 +74,7 @@ function FeedbackCard({
           </p>
         </div>
         <p className="text-xs text-green-600/70 dark:text-green-500">
-          Feedback sudah dikirim.
+          Feedback submitted.
         </p>
       </div>
     );
@@ -98,7 +98,7 @@ function FeedbackCard({
         onChange={(e) => setState((s) => ({ ...s, comment: e.target.value }))}
         disabled={isPending}
         rows={2}
-        placeholder="Komentar tambahan (opsional)..."
+        placeholder="Additional comments (optional)..."
         maxLength={1000}
         className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-60"
       />
@@ -116,7 +116,7 @@ function FeedbackCard({
         disabled={isPending || state.rating === 0}
         className="self-start inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {isPending ? "Mengirim..." : "Kirim Feedback"}
+        {isPending ? "Submitting..." : "Submit Feedback"}
       </button>
     </div>
   );
@@ -142,21 +142,21 @@ export function FeedbackSection({
   }> = [
     {
       type: "assistant",
-      label: "Feedback Asisten",
+      label: "Assistant Feedback",
       description:
-        "Berikan penilaian terhadap performa asisten selama sesi berlangsung.",
+        "Rate the performance of the assistant during the session.",
     },
     {
       type: "session",
-      label: "Feedback Sesi",
+      label: "Session Feedback",
       description:
-        "Berikan penilaian terhadap kualitas materi dan jalannya sesi praktikum/diskusi.",
+        "Rate the quality of the material and the flow of the practicum/discussion session.",
     },
     {
       type: "laboratory",
-      label: "Feedback Laboratorium",
+      label: "Laboratory Feedback",
       description:
-        "Berikan penilaian terhadap kondisi laboratorium, peralatan, dan fasilitas.",
+        "Rate the condition of the laboratory, equipment, and facilities.",
     },
   ];
 
@@ -168,7 +168,7 @@ export function FeedbackSection({
     <section className="space-y-4">
       <div className="flex items-center gap-2">
         <MessageSquare className="h-4 w-4 text-muted-foreground" />
-        <h2 className="text-base font-semibold text-foreground">Feedback Modul</h2>
+        <h2 className="text-base font-semibold text-foreground">Module Feedback</h2>
       </div>
 
       {!allRequiredSubmitted ? (
@@ -176,11 +176,11 @@ export function FeedbackSection({
           <Lock className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
           <div>
             <p className="text-sm font-medium text-amber-700 dark:text-amber-300">
-              Feedback Terkunci
+              Feedback Locked
             </p>
             <p className="mt-0.5 text-xs text-amber-600/80 dark:text-amber-400/80">
-              Selesaikan semua tugas wajib terlebih dahulu sebelum dapat mengisi
-              feedback modul ini.
+              Please complete all required tasks before filling out the feedback
+              for this module.
             </p>
           </div>
         </div>
@@ -189,10 +189,10 @@ export function FeedbackSection({
           <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
           <div>
             <p className="text-sm font-semibold text-green-700 dark:text-green-400">
-              Semua Feedback Terkirim
+              All Feedback Submitted
             </p>
             <p className="text-xs text-green-600/70 dark:text-green-500">
-              Terima kasih atas masukan Anda. Modul ini telah selesai.
+              Thank you for your feedback. This module is complete.
             </p>
           </div>
         </div>

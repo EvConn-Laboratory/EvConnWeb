@@ -18,7 +18,7 @@ function StatusBadge({ status }: { status: string }) {
   if (status === "published") {
     return (
       <span className="inline-flex items-center rounded-full border border-green-500/20 bg-green-500/10 px-2 py-0.5 text-[11px] font-medium text-green-600 dark:text-green-400">
-        Diterbitkan
+        Published
       </span>
     );
   }
@@ -57,21 +57,21 @@ export default async function AdminCmsNewsPage() {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 text-left">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
               <Newspaper className="h-4 w-4" />
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-foreground">
+            <h1 className="text-xl font-bold tracking-tight text-foreground text-left">
               News
             </h1>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground text-left">
             {articles.length === 0
-              ? "Belum ada artikel"
-              : `${articles.length} artikel · `}
+              ? "No articles yet"
+              : `${articles.length} articles · `}
             {articles.length > 0 && (
               <span className="text-green-600 dark:text-green-400">
-                {publishedCount} diterbitkan
+                {publishedCount} published
               </span>
             )}
           </p>
@@ -80,7 +80,7 @@ export default async function AdminCmsNewsPage() {
         <Button size="sm" className="gap-1.5" asChild>
           <Link href="/admin/cms/news/create">
             <Plus className="h-3.5 w-3.5" />
-            Buat Artikel
+            Create Article
           </Link>
         </Button>
       </div>
@@ -88,11 +88,11 @@ export default async function AdminCmsNewsPage() {
       {/* Table */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm text-left">
             <thead>
               <tr className="border-b border-border bg-muted/40">
                 <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">
-                  Judul
+                  Title
                 </th>
                 <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">
                   Slug
@@ -101,13 +101,13 @@ export default async function AdminCmsNewsPage() {
                   Status
                 </th>
                 <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">
-                  Penulis
+                  Author
                 </th>
                 <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">
-                  Tanggal
+                  Date
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-right text-xs font-medium text-muted-foreground">
-                  Aksi
+                <th className="whitespace-nowrap px-4 py-3 text-right text-xs text-muted-foreground font-semibold">
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -118,7 +118,7 @@ export default async function AdminCmsNewsPage() {
                     colSpan={6}
                     className="px-4 py-12 text-center text-sm text-muted-foreground"
                   >
-                    Belum ada artikel. Buat artikel pertama.
+                    No articles yet. Create your first article.
                   </td>
                 </tr>
               ) : (
@@ -154,15 +154,15 @@ export default async function AdminCmsNewsPage() {
                     </td>
 
                     {/* Date */}
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 font-semibold">
                       <span className="text-xs text-muted-foreground">
                         {article.publishedAt
                           ? new Date(article.publishedAt).toLocaleDateString(
-                              "id-ID",
+                              "en-US",
                               { day: "numeric", month: "short", year: "numeric" },
                             )
                           : new Date(article.updatedAt).toLocaleDateString(
-                              "id-ID",
+                              "en-US",
                               { day: "numeric", month: "short", year: "numeric" },
                             )}
                       </span>
@@ -178,7 +178,7 @@ export default async function AdminCmsNewsPage() {
                             rel="noopener noreferrer"
                             className="flex items-center gap-1 text-xs font-medium text-primary hover:underline underline-offset-4"
                           >
-                            Lihat
+                            View
                             <ArrowUpRight className="h-3 w-3" />
                           </Link>
                         )}
@@ -186,7 +186,7 @@ export default async function AdminCmsNewsPage() {
                           variant="outline"
                           size="xs"
                           asChild
-                          className="gap-1"
+                          className="gap-1 font-semibold"
                         >
                           <Link href={`/admin/cms/news/${article.id}/edit`}>
                             Edit

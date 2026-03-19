@@ -55,41 +55,41 @@ export default async function CmsOverviewPage() {
   const CARDS = [
     {
       label: "Programs",
-      description: "Kelola program dan layanan laboratorium yang ditampilkan ke publik.",
+      description: "Manage lab programs and services shown to the public.",
       href: "/admin/cms/programs",
       Icon: BookOpen,
       count: publishedProgramCount,
-      countLabel: "program diterbitkan",
+      countLabel: "published programs",
       accent: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
       border: "border-violet-500/20",
     },
     {
       label: "News",
-      description: "Artikel berita dan pengumuman dari laboratorium.",
+      description: "News articles and announcements from the lab.",
       href: "/admin/cms/news",
       Icon: Newspaper,
       count: publishedNewsCount,
-      countLabel: "artikel diterbitkan",
+      countLabel: "published articles",
       accent: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
       border: "border-blue-500/20",
     },
     {
       label: "Gallery",
-      description: "Koleksi foto dan media dokumentasi kegiatan.",
+      description: "Collection of photos and documentation media.",
       href: "/admin/cms/gallery",
       Icon: Image,
       count: publishedGalleryCount,
-      countLabel: "item diterbitkan",
+      countLabel: "published items",
       accent: "bg-teal-500/10 text-teal-600 dark:text-teal-400",
       border: "border-teal-500/20",
     },
     {
       label: "Pages",
-      description: "Halaman statis seperti tentang, kontak, dan kebijakan privasi.",
+      description: "Static pages like About, Contact, and Privacy Policy.",
       href: "/admin/cms/pages",
       Icon: FileText,
       count: publishedPageCount,
-      countLabel: "halaman diterbitkan",
+      countLabel: "published pages",
       accent: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
       border: "border-amber-500/20",
     },
@@ -99,16 +99,16 @@ export default async function CmsOverviewPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-left">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
             <FileText className="h-4 w-4" />
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-foreground">
+          <h1 className="text-xl font-bold tracking-tight text-foreground text-left">
             Content Management
           </h1>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Kelola konten publik website laboratorium
+        <p className="mt-1 text-sm text-muted-foreground text-left">
+          Manage public content for the laboratory website.
         </p>
       </div>
 
@@ -118,7 +118,7 @@ export default async function CmsOverviewPage() {
           <Link
             key={card.href}
             href={card.href}
-            className="group rounded-2xl border border-border bg-card p-5 transition-all hover:shadow-sm hover:border-border/80"
+            className="group rounded-2xl border border-border bg-card p-5 transition-all hover:shadow-sm hover:border-border/80 text-left"
           >
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -142,7 +142,7 @@ export default async function CmsOverviewPage() {
               <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-muted-foreground" />
             </div>
 
-            <div className="mt-4 flex items-center gap-1.5">
+            <div className="mt-4 flex items-center gap-1.5 justify-start">
               <span
                 className={cn(
                   "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold",
@@ -150,7 +150,7 @@ export default async function CmsOverviewPage() {
                   card.border,
                 )}
               >
-                {card.count.toLocaleString("id-ID")}
+                {card.count.toLocaleString("en-US")}
               </span>
               <span className="text-xs text-muted-foreground">
                 {card.countLabel}

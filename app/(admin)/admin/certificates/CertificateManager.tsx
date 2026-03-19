@@ -59,7 +59,7 @@ export function CertificateManager({
     setMessage(null);
 
     if (!selectedOfferingId || !selectedStudentId) {
-      setError("Pilih offering dan mahasiswa terlebih dahulu.");
+      setError("Please select both an offering and a student first.");
       return;
     }
 
@@ -74,14 +74,14 @@ export function CertificateManager({
         return;
       }
 
-      const certNo = res.data?.certificateNumber ?? "(nomor tidak tersedia)";
-      setMessage(`Sertifikat berhasil diterbitkan: ${certNo}`);
+      const certNo = res.data?.certificateNumber ?? "(number unavailable)";
+      setMessage(`Certificate successfully issued: ${certNo}`);
       window.location.reload();
     });
   }
 
   function revokeCertificate(certificateId: string) {
-    const reason = window.prompt("Masukkan alasan pencabutan sertifikat:");
+    const reason = window.prompt("Enter reason for revoking certificate:");
     if (!reason || reason.trim().length === 0) return;
 
     setError(null);
@@ -94,7 +94,7 @@ export function CertificateManager({
         return;
       }
 
-      setMessage("Sertifikat berhasil dicabut.");
+      setMessage("Certificate successfully revoked.");
       window.location.reload();
     });
   }
@@ -102,20 +102,20 @@ export function CertificateManager({
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-border bg-card p-5">
-        <h2 className="mb-4 text-sm font-semibold text-foreground">Terbitkan Sertifikat</h2>
+        <h2 className="mb-4 text-sm font-semibold text-foreground">Issue Certificate</h2>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Offering</label>
+            <label className="text-xs font-medium text-muted-foreground text-left block">Offering</label>
             <select
               value={selectedOfferingId}
               onChange={(e) => {
                 setSelectedOfferingId(e.target.value);
                 setSelectedStudentId("");
               }}
-              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground"
+              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
             >
-              <option value="">Pilih offering</option>
+              <option value="">Select offering</option>
               {offerings.map((o) => (
                 <option key={o.id} value={o.id}>
                   {o.label}
@@ -125,14 +125,14 @@ export function CertificateManager({
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Mahasiswa</label>
+            <label className="text-xs font-medium text-muted-foreground text-left block">Student</label>
             <select
               value={selectedStudentId}
               onChange={(e) => setSelectedStudentId(e.target.value)}
-              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground"
+              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50"
               disabled={!selectedOfferingId}
             >
-              <option value="">Pilih mahasiswa</option>
+              <option value="">Select student</option>
               {students.map((s) => (
                 <option key={s.studentId} value={s.studentId}>
                   {s.studentName}
@@ -149,16 +149,16 @@ export function CertificateManager({
             onClick={issueCertificate}
             disabled={isPending}
             className={cn(
-              "inline-flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground",
+              "inline-flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-all active:scale-95",
               isPending && "opacity-60",
             )}
           >
             <Award className="h-4 w-4" />
-            {isPending ? "Memproses..." : "Terbitkan"}
+            {isPending ? "Issuing..." : "Issue Certificate"}
           </button>
 
-          <p className="text-xs text-muted-foreground">
-            Sistem akan menolak penerbitan ganda pada offering yang sama.
+          <p className="text-xs text-muted-foreground text-left">
+            The system will prevent duplicate issuance for the same offering.
           </p>
         </div>
 
@@ -178,16 +178,16 @@ export function CertificateManager({
       </div>
 
       <div className="rounded-2xl border border-border bg-card p-5">
-        <h2 className="mb-4 text-sm font-semibold text-foreground">Daftar Sertifikat</h2>
+        <h2 className="mb-4 text-sm font-semibold text-foreground">Issued Certificates</h2>
 
         {certificates.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Belum ada sertifikat diterbitkan.</p>
+          <p className="text-sm text-muted-foreground text-left">No certificates issued yet.</p>
         ) : (
           <div className="space-y-3">
             {certificates.map((cert) => {
               const revoked = !!cert.revokedAt;
               return (
-                <div key={cert.id} className="rounded-xl border border-border bg-background p-4">
+                <div key={cert.id} className="rounded-xl border border-border bg-background p-4 text-left">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-semibold text-foreground">{cert.certificateNumber}</p>
@@ -198,18 +198,18 @@ export function CertificateManager({
                         {cert.studentName}
                         {cert.studentNim ? ` (${cert.studentNim})` : ""}
                         {" · "}
-                        Diterbitkan {new Date(cert.issuedAt).toLocaleDateString("id-ID")}
+                        Issued {new Date(cert.issuedAt).toLocaleDateString("en-US")}
                       </p>
                       {revoked && cert.revokedReason && (
                         <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-                          Dicabut: {cert.revokedReason}
+                          Revoked: {cert.revokedReason}
                         </p>
                       )}
                     </div>
 
                     {revoked ? (
                       <span className="rounded-full bg-red-500/10 px-2.5 py-0.5 text-xs font-medium text-red-600 dark:text-red-400">
-                        Dicabut
+                        Revoked
                       </span>
                     ) : (
                       <button
@@ -219,7 +219,7 @@ export function CertificateManager({
                         className="inline-flex h-8 items-center gap-1.5 rounded-md border border-red-500/30 bg-red-500/10 px-3 text-xs font-medium text-red-600 transition-colors hover:bg-red-500/20 disabled:opacity-60 dark:text-red-400"
                       >
                         <Ban className="h-3.5 w-3.5" />
-                        Cabut
+                        Revoke
                       </button>
                     )}
                   </div>

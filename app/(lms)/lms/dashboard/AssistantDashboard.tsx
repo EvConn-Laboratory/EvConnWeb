@@ -157,8 +157,8 @@ export default function AssistantDashboard({
   const chartData = feedbackStats.map((s) => ({
     name:
       s.module.length > 12 ? s.module.slice(0, 12) + "…" : s.module,
-    Asisten: Number(s.assistantAvg.toFixed(2)),
-    Sesi: Number(s.sessionAvg.toFixed(2)),
+    Assistant: Number(s.assistantAvg.toFixed(2)),
+    Session: Number(s.sessionAvg.toFixed(2)),
     Lab: Number(s.labAvg.toFixed(2)),
   }));
 
@@ -172,31 +172,31 @@ export default function AssistantDashboard({
       {/* Header */}
       <motion.div
         variants={fadeUp}
-        className="flex items-start justify-between gap-4"
+        className="flex flex-col sm:flex-row sm:items-start justify-between gap-4"
       >
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-primary">
             Dashboard
           </p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground">
-            Halo, {firstName}{" "}
-            {role === "super_admin" && (
-              <span className="ml-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary align-middle">
-                Super Admin
-              </span>
-            )}
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Ringkasan aktivitas pengajaran Anda.
-          </p>
+          Hello, {firstName}{" "}
+          {role === "super_admin" && (
+            <span className="ml-1 inline-flex rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-medium text-primary uppercase">
+              Admin
+            </span>
+          )}
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Summary of your teaching activities.
+        </p>
         </div>
         {pendingGradingCount > 0 && (
           <Link
             href="/lms/grading"
-            className="shrink-0 flex items-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/8 px-4 py-2.5 text-sm font-medium text-amber-400 transition-colors hover:bg-amber-500/12"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/8 px-4 py-2.5 text-sm font-medium text-amber-400 transition-colors hover:bg-amber-500/12"
           >
             <Star className="h-4 w-4" />
-            {pendingGradingCount} perlu dinilai
+            {pendingGradingCount} needs grading
           </Link>
         )}
       </motion.div>
@@ -204,28 +204,28 @@ export default function AssistantDashboard({
       {/* Stats */}
       <motion.div
         variants={fadeUp}
-        className="grid grid-cols-2 gap-4 lg:grid-cols-4"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
       >
         <StatCard
           icon={BookOpen}
           value={offeringsCount}
           label="Offerings"
-          sub="Yang diampu"
+          sub="Assigned"
           color="bg-primary/10 text-primary"
           href="/lms/offerings"
         />
         <StatCard
           icon={Users}
           value={totalStudentsCount}
-          label="Mahasiswa"
-          sub="Total terdaftar"
+          label="Students"
+          sub="Total enrolled"
           color="bg-blue-500/10 text-blue-400"
         />
         <StatCard
           icon={ClipboardList}
           value={pendingGradingCount}
-          label="Perlu Dinilai"
-          sub="Submission essay"
+          label="Needs Grading"
+          sub="Essay submissions"
           color="bg-amber-500/10 text-amber-400"
           href="/lms/grading"
           urgent
@@ -234,14 +234,15 @@ export default function AssistantDashboard({
           icon={Star}
           value={
             typeof avgFeedbackRating === "number"
-              ? avgFeedbackRating.toFixed(1)
+              ? (avgFeedbackRating as number).toFixed(1)
               : avgFeedbackRating
           }
           label="Avg Rating"
-          sub="Feedback mahasiswa"
+          sub="Student feedback"
           color="bg-green-500/10 text-green-400"
         />
       </motion.div>
+
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Offerings */}
@@ -254,14 +255,14 @@ export default function AssistantDashboard({
               href="/lms/offerings"
               className="text-xs font-medium text-primary hover:underline"
             >
-              Semua →
+              All →
             </Link>
           </div>
           {offerings.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-card py-12 text-center">
               <BookOpen className="mb-2 h-8 w-8 text-muted-foreground/30" />
               <p className="text-sm text-muted-foreground">
-                Belum ada offering.
+                No offerings yet.
               </p>
             </div>
           ) : (
@@ -311,7 +312,7 @@ export default function AssistantDashboard({
                       <p className="font-bold text-foreground tabular-nums">
                         {off.studentCount}
                       </p>
-                      <p>Siswa</p>
+                      <p>Students</p>
                     </div>
                     {off.pendingGrades > 0 && (
                       <div className="text-center text-amber-400">
@@ -339,7 +340,7 @@ export default function AssistantDashboard({
               href="/lms/grading"
               className="text-xs font-medium text-primary hover:underline"
             >
-              Buka →
+              Open →
             </Link>
           </div>
           <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -347,7 +348,7 @@ export default function AssistantDashboard({
               <div className="flex flex-col items-center justify-center py-10 text-center">
                 <ClipboardList className="mb-2 h-8 w-8 text-muted-foreground/30" />
                 <p className="text-sm text-muted-foreground">
-                  Tidak ada submission pending.
+                  No pending submissions.
                 </p>
               </div>
             ) : (
@@ -384,7 +385,7 @@ export default function AssistantDashboard({
                     href="/lms/grading"
                     className="flex items-center justify-center gap-1.5 py-3 text-xs font-medium text-primary hover:bg-muted/30 transition-colors"
                   >
-                    +{gradingQueue.length - 5} lainnya{" "}
+                    +{gradingQueue.length - 5} more{" "}
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 )}
@@ -404,7 +405,7 @@ export default function AssistantDashboard({
             {/* Chart */}
             <div className="rounded-xl border border-border bg-card p-5">
               <p className="mb-4 text-xs font-medium text-muted-foreground">
-                Trend Rating per Modul
+                Rating Trend per Module
               </p>
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={chartData}>
@@ -422,14 +423,14 @@ export default function AssistantDashboard({
                   <Legend wrapperStyle={{ fontSize: 11 }} />
                   <Line
                     type="monotone"
-                    dataKey="Asisten"
+                    dataKey="Assistant"
                     stroke="#2ABFBF"
                     strokeWidth={2}
                     dot={false}
                   />
                   <Line
                     type="monotone"
-                    dataKey="Sesi"
+                    dataKey="Session"
                     stroke="#3B82C4"
                     strokeWidth={2}
                     dot={false}
@@ -448,7 +449,7 @@ export default function AssistantDashboard({
             {/* Per-module stats */}
             <div className="rounded-xl border border-border bg-card p-5">
               <p className="mb-4 text-xs font-medium text-muted-foreground">
-                Breakdown per Modul
+                Breakdown per Module
               </p>
               <div className="space-y-4 overflow-y-auto max-h-[200px]">
                 {feedbackStats.map((stat) => (
@@ -458,12 +459,12 @@ export default function AssistantDashboard({
                         {stat.module}
                       </p>
                       <span className="ml-2 shrink-0 text-[10px] text-muted-foreground">
-                        {stat.responseCount} respons
+                        {stat.responseCount} responses
                       </span>
                     </div>
                     <div className="space-y-1.5">
-                      <RatingBar label="Asisten" value={stat.assistantAvg} />
-                      <RatingBar label="Sesi" value={stat.sessionAvg} />
+                      <RatingBar label="Assistant" value={stat.assistantAvg} />
+                      <RatingBar label="Session" value={stat.sessionAvg} />
                       <RatingBar label="Lab" value={stat.labAvg} />
                     </div>
                   </div>
@@ -477,11 +478,11 @@ export default function AssistantDashboard({
       {/* Quick links */}
       <motion.div variants={fadeUp}>
         <h2 className="mb-3 text-sm font-semibold text-foreground">
-          Akses Cepat
+          Quick Access
         </h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { href: "/lms/groups", icon: Users, label: "Kelola Groups" },
+            { href: "/lms/groups", icon: Users, label: "Manage Groups" },
             {
               href: "/lms/submissions",
               icon: FileText,

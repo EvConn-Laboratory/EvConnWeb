@@ -23,15 +23,15 @@ export type ActionResult<T = undefined> =
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface CsvRow {
-  nama: string;
+  name: string;
   nim: string;
-  jurusan: string;
-  kelas: string;
+  major: string;
+  class: string;
   semester: string;
-  hari: string;
+  day: string;
   shift: string;
-  kelompok: string;
-  nama_mata_kuliah: string;
+  group: string;
+  course_name: string;
 }
 
 interface ImportResult {
@@ -67,15 +67,15 @@ export async function importEnrollmentCsvAction(
   });
 
   const requiredColumns = [
-    "nama",
+    "name",
     "nim",
-    "jurusan",
-    "kelas",
+    "major",
+    "class",
     "semester",
-    "hari",
+    "day",
     "shift",
-    "kelompok",
-    "nama_mata_kuliah",
+    "group",
+    "course_name",
   ];
 
   const headers = parsed.meta.fields ?? [];
@@ -99,21 +99,21 @@ export async function importEnrollmentCsvAction(
     const rowNum = i + 2; // 1-based + header row
 
     // Validate required fields per row
-    if (!row.nim?.trim() || !row.nama?.trim() || !row.nama_mata_kuliah?.trim()) {
+    if (!row.nim?.trim() || !row.name?.trim() || !row.course_name?.trim()) {
       result.errors.push({
         row: rowNum,
         nim: row.nim ?? "(empty)",
-        reason: "Missing required fields: nama, nim, or nama_mata_kuliah",
+        reason: "Missing required fields: name, nim, or course_name",
       });
       result.skippedRows++;
       continue;
     }
 
     const nim = row.nim.trim();
-    const nama = row.nama.trim();
-    const courseName = row.nama_mata_kuliah.trim();
+    const name = row.name.trim();
+    const courseName = row.course_name.trim();
     const semester = row.semester?.trim() ?? "";
-    const hari = row.hari?.trim() ?? null;
+    const day = row.day?.trim() ?? null;
     const shift = row.shift?.trim() ?? null;
 
     try {
@@ -145,7 +145,7 @@ export async function importEnrollmentCsvAction(
           and(
             eq(courseOfferings.courseId, course.id),
             eq(courseOfferings.semester, semester),
-            hari ? eq(courseOfferings.hari, hari) : isNull(courseOfferings.hari),
+            day ? eq(courseOfferings.hari, day) : isNull(courseOfferings.hari),
             shift
               ? eq(courseOfferings.shift, shift)
               : isNull(courseOfferings.shift),
@@ -161,7 +161,7 @@ export async function importEnrollmentCsvAction(
             courseId: course.id,
             semester,
             academicYear,
-            hari: hari ?? undefined,
+            hari: day ?? undefined,
             shift: shift ?? undefined,
             status: "active",
             visibility: "internal",
@@ -182,7 +182,7 @@ export async function importEnrollmentCsvAction(
         const [newStudent] = await db
           .insert(users)
           .values({
-            name: nama,
+            name,
             nim,
             username: nim,
             passwordHash,
@@ -219,9 +219,9 @@ export async function importEnrollmentCsvAction(
       await db.insert(enrollments).values({
         offeringId: offering.id,
         studentId: student.id,
-        jurusan: row.jurusan?.trim(),
-        kelas: row.kelas?.trim(),
-        kelompokCsv: row.kelompok?.trim(),
+        jurusan: row.major?.trim(),
+        kelas: row.class?.trim(),
+        kelompokCsv: row.group?.trim(),
       });
 
       result.successCount++;

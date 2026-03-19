@@ -99,7 +99,7 @@ function MaterialItem({
       <div className="min-w-0 flex-1">
         <p className="text-sm font-medium text-foreground">{item.title}</p>
         <p className="text-xs text-muted-foreground">
-          {isPdf ? "Dokumen PDF" : "Materi Slide"}
+          {isPdf ? "PDF Document" : "Slide Material"}
         </p>
       </div>
       <a
@@ -114,7 +114,7 @@ function MaterialItem({
         )}
       >
         <Download className="h-3.5 w-3.5" />
-        {isPdf ? "Buka PDF" : "Buka Slide"}
+        {isPdf ? "Open PDF" : "Open Slide"}
       </a>
     </motion.div>
   );
@@ -167,7 +167,7 @@ function VideoItem({
         </div>
       ) : (
         <div className="flex items-center justify-center py-10 text-sm text-muted-foreground">
-          URL video tidak tersedia.
+          Video URL not available.
         </div>
       )}
     </motion.div>
@@ -184,14 +184,14 @@ function ExternalLinkItem({
   index: number;
 }) {
   let url = "#";
-  let label = "Buka Tautan";
+  let label = "Open Link";
   try {
     const data = JSON.parse(item.contentData) as {
       url?: string;
       label?: string;
     };
     url = data.url ?? "#";
-    label = data.label ?? "Buka Tautan";
+    label = data.label ?? "Open Link";
   } catch {
     // fallback
   }
@@ -268,7 +268,7 @@ export function ContentList({ items }: { items: ContentItemProps[] }) {
       animate="show"
       className="space-y-4"
     >
-      <h2 className="text-base font-semibold text-foreground">Konten Modul</h2>
+      <h2 className="text-base font-semibold text-foreground">Module Content</h2>
       {items.map((item, i) => (
         <ContentItemRenderer key={item.id} item={item} index={i} />
       ))}

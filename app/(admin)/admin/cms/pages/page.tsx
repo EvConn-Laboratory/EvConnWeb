@@ -38,21 +38,21 @@ export default async function AdminCmsPagesPage() {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 text-left">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
               <FileText className="h-4 w-4" />
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-foreground">
+            <h1 className="text-xl font-bold tracking-tight text-foreground text-left">
               Pages
             </h1>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground text-left">
             {pages.length === 0
-              ? "Belum ada halaman"
-              : `${pages.length} halaman · `}
+              ? "No pages yet"
+              : `${pages.length} pages · `}
             {pages.length > 0 && (
               <span className="text-green-600 dark:text-green-400">
-                {publishedCount} diterbitkan
+                {publishedCount} published
               </span>
             )}
           </p>
@@ -62,36 +62,36 @@ export default async function AdminCmsPagesPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+      <div className="rounded-xl border border-border bg-card overflow-hidden text-left">
+        <div className="overflow-x-auto text-left">
+          <table className="w-full text-sm text-left">
             <thead>
-              <tr className="border-b border-border bg-muted/40">
-                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">
+              <tr className="border-b border-border bg-muted/40 text-left">
+                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold text-muted-foreground">
                   Slug
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">
-                  Judul
+                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold text-muted-foreground">
+                  Title
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">
+                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold text-muted-foreground">
                   Status
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-muted-foreground">
-                  Diperbarui
+                <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold text-muted-foreground">
+                  Updated
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-right text-xs font-medium text-muted-foreground">
-                  Aksi
+                <th className="whitespace-nowrap px-4 py-3 text-right text-xs text-muted-foreground font-semibold">
+                  Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="divide-y divide-border text-left">
               {pages.length === 0 ? (
                 <tr>
                   <td
                     colSpan={5}
                     className="px-4 py-12 text-center text-sm text-muted-foreground"
                   >
-                    Belum ada halaman statis.
+                    No static pages yet.
                   </td>
                 </tr>
               ) : (
@@ -109,14 +109,14 @@ export default async function AdminCmsPagesPage() {
 
                     {/* Title */}
                     <td className="px-4 py-3">
-                      <p className="font-medium text-foreground">{page.title}</p>
+                      <p className="font-medium text-foreground text-left">{page.title}</p>
                     </td>
 
                     {/* Published status */}
                     <td className="px-4 py-3">
                       {page.isPublished ? (
                         <span className="inline-flex items-center rounded-full border border-green-500/20 bg-green-500/10 px-2 py-0.5 text-[11px] font-medium text-green-600 dark:text-green-400">
-                          Diterbitkan
+                          Published
                         </span>
                       ) : (
                         <span className="inline-flex items-center rounded-full border border-border bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
@@ -126,9 +126,9 @@ export default async function AdminCmsPagesPage() {
                     </td>
 
                     {/* Updated at */}
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 font-semibold">
                       <span className="text-xs text-muted-foreground">
-                        {new Date(page.updatedAt).toLocaleDateString("id-ID", {
+                        {new Date(page.updatedAt).toLocaleDateString("en-US", {
                           day: "numeric",
                           month: "short",
                           year: "numeric",
@@ -138,7 +138,7 @@ export default async function AdminCmsPagesPage() {
 
                     {/* Actions */}
                     <td className="px-4 py-3">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-2 text-left">
                         {page.isPublished && (
                           <Link
                             href={`/${page.slug}`}
@@ -146,7 +146,7 @@ export default async function AdminCmsPagesPage() {
                             rel="noopener noreferrer"
                             className="flex items-center gap-1 text-xs font-medium text-primary hover:underline underline-offset-4"
                           >
-                            Lihat
+                            View
                             <ArrowUpRight className="h-3 w-3" />
                           </Link>
                         )}
@@ -157,19 +157,18 @@ export default async function AdminCmsPagesPage() {
                             name="isPublished"
                             value={String(page.isPublished)}
                           />
-                          <Button
+                          <button
                             type="submit"
-                            variant="outline"
-                            size="xs"
+                            title={page.isPublished ? "Unpublish" : "Publish"}
                             className={cn(
-                              "gap-1",
+                              "inline-flex items-center justify-center rounded-md text-xs font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-7 px-2 py-1 gap-1",
                               page.isPublished
                                 ? "text-muted-foreground"
                                 : "text-green-600 border-green-500/30 hover:bg-green-500/10",
                             )}
                           >
-                            {page.isPublished ? "Cabut" : "Terbitkan"}
-                          </Button>
+                            {page.isPublished ? "Unpublish" : "Publish"}
+                          </button>
                         </form>
                         <EditCmsPageForm page={page} />
                       </div>

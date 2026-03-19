@@ -43,13 +43,13 @@ export default async function FeedbackPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">My Feedback</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Riwayat feedback yang sudah Anda kirim per modul.
+          History of feedback you have submitted per module.
         </p>
       </div>
 
       {rows.length === 0 ? (
         <div className="rounded-2xl border border-border bg-card p-8 text-sm text-muted-foreground">
-          Belum ada feedback yang dikirim.
+          No feedback submitted yet.
         </div>
       ) : (
         <div className="space-y-3">
@@ -74,7 +74,7 @@ export default async function FeedbackPage() {
                   {row.rating}/5
                 </span>
                 <span className="text-muted-foreground">
-                  {new Date(row.createdAt).toLocaleDateString("id-ID", {
+                  {new Date(row.createdAt).toLocaleDateString("en-US", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",

@@ -28,10 +28,10 @@ export const attendanceRecords = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     offeringId: uuid("offering_id")
       .notNull()
-      .references(() => courseOfferings.id),
+      .references(() => courseOfferings.id, { onDelete: "cascade" }),
     moduleId: uuid("module_id")
       .notNull()
-      .references(() => modules.id),
+      .references(() => modules.id, { onDelete: "cascade" }),
     studentId: uuid("student_id").notNull(),
     recordedBy: uuid("recorded_by").notNull(),
     status: attendanceStatusEnum("status").notNull().default("present"),
@@ -89,7 +89,7 @@ export const discussionPosts = pgTable("discussion_posts", {
   id: uuid("id").primaryKey().defaultRandom(),
   threadId: uuid("thread_id")
     .notNull()
-    .references(() => discussionThreads.id),
+    .references(() => discussionThreads.id, { onDelete: "cascade" }),
   authorId: uuid("author_id").notNull(),
   parentId: uuid("parent_id"), // self-reference for nested replies (NULL = top-level)
   content: text("content").notNull(),
@@ -107,7 +107,7 @@ export const discussionReactions = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     postId: uuid("post_id")
       .notNull()
-      .references(() => discussionPosts.id),
+      .references(() => discussionPosts.id, { onDelete: "cascade" }),
     userId: uuid("user_id").notNull(),
     emoji: text("emoji").notNull().default("👍"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -128,10 +128,10 @@ export const groupSubmissions = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     assignmentId: uuid("assignment_id")
       .notNull()
-      .references(() => assignments.id),
+      .references(() => assignments.id, { onDelete: "cascade" }),
     groupId: uuid("group_id")
       .notNull()
-      .references(() => groups.id),
+      .references(() => groups.id, { onDelete: "cascade" }),
     submittedBy: uuid("submitted_by").notNull(), // the student who pressed submit
     filePath: text("file_path"),
     textAnswer: text("text_answer"),
@@ -146,7 +146,7 @@ export const groupSubmissionHistory = pgTable("group_submission_history", {
   id: uuid("id").primaryKey().defaultRandom(),
   groupSubmissionId: uuid("group_submission_id")
     .notNull()
-    .references(() => groupSubmissions.id),
+    .references(() => groupSubmissions.id, { onDelete: "cascade" }),
   assignmentId: uuid("assignment_id").notNull(),
   groupId: uuid("group_id").notNull(),
   submittedBy: uuid("submitted_by").notNull(),
