@@ -10,6 +10,7 @@ import { asc, eq } from "drizzle-orm";
 import { AddAssistantForm } from "./_components/AddAssistantForm";
 import { EditAssistantForm } from "./_components/EditAssistantForm";
 import { getUsersForAssistantLinkingAction } from "@/lib/actions/personnel";
+import { getAllGalleryItemsAction } from "@/lib/actions/cms";
 
 export const metadata: Metadata = { title: "Assistants | Hall of Fame | Admin" };
 
@@ -20,8 +21,9 @@ const TABS = [
   { label: "Roles", href: "/admin/hall-of-fame/roles" },
 ];
 
-function Avatar({ name, photoPath }: { name: string; photoPath: string | null }) {
-  const initials = name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+function Avatar({ name, initials: providedInitials, photoPath }: { name: string; initials: string | null; photoPath: string | null }) {
+  const computedInitials = name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+  const initials = providedInitials || computedInitials;
   let hash = 0;
   for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) | 0;
   const COLORS = ["bg-blue-500","bg-green-500","bg-violet-500","bg-amber-500","bg-rose-500","bg-teal-500","bg-indigo-500","bg-pink-500"];
@@ -64,7 +66,7 @@ export default async function AssistantsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const generationId = params.generationId;
 
-  const [allGenerations, rows, allOrgRoles, allRoleAssignments, usersForLinking] = await Promise.all([
+  const [allGenerations, rows, allOrgRoles, allRoleAssignments, usersForLinking, galleryItems] = await Promise.all([
     db.select().from(generations).orderBy(asc(generations.number)),
     db
       .select({
@@ -77,6 +79,7 @@ export default async function AssistantsPage({ searchParams }: PageProps) {
         githubUrl: assistantProfiles.githubUrl,
         instagramUrl: assistantProfiles.instagramUrl,
         linkedinUrl: assistantProfiles.linkedinUrl,
+        initials: assistantProfiles.initials,
         joinedYear: assistantProfiles.joinedYear,
         endYear: assistantProfiles.endYear,
         generationName: generations.name,
@@ -97,6 +100,7 @@ export default async function AssistantsPage({ searchParams }: PageProps) {
       .from(assistantRoles)
       .innerJoin(organizationalRoles, eq(assistantRoles.roleId, organizationalRoles.id)),
     getUsersForAssistantLinkingAction(),
+    getAllGalleryItemsAction(),
   ]);
 
   // Build roles map per assistant
@@ -148,6 +152,8 @@ export default async function AssistantsPage({ searchParams }: PageProps) {
         <AddAssistantForm
           generations={allGenerations.map((g) => ({ id: g.id, number: g.number, name: g.name }))}
           usersForLinking={usersForLinking}
+          availableRoles={allOrgRoles.map((r) => ({ id: r.id, name: r.name, sortOrder: r.sortOrder }))}
+          galleryItems={galleryItems} 
         />
       </div>
 
@@ -223,7 +229,7 @@ export default async function AssistantsPage({ searchParams }: PageProps) {
                   <tr key={row.id} className="transition-colors hover:bg-muted/30">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <Avatar name={row.fullName} photoPath={row.profilePhotoPath} />
+                        <Avatar name={row.fullName} initials={row.initials} photoPath={row.profilePhotoPath} />
                         <div>
                           <p className="font-medium text-foreground">{row.fullName}</p>
                           <p className="text-xs text-muted-foreground">
@@ -291,11 +297,14 @@ export default async function AssistantsPage({ searchParams }: PageProps) {
                             githubUrl: row.githubUrl,
                             instagramUrl: row.instagramUrl,
                             linkedinUrl: row.linkedinUrl,
+                            initials: row.initials,
+                            profilePhotoPath: row.profilePhotoPath,
                           }}
                           generations={allGenerations.map((g) => ({ id: g.id, number: g.number, name: g.name }))}
                           currentRoles={row.roles}
                           availableRoles={allOrgRoles.map((r) => ({ id: r.id, name: r.name, sortOrder: r.sortOrder }))}
                           usersForLinking={usersForLinking}
+                          galleryItems={galleryItems}
                         />
                       </div>
                     </td>

@@ -14,11 +14,23 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { ImagePicker } from "@/components/ImagePicker";
 
 interface Generation {
   id: string;
   number: number;
   name: string;
+}
+
+interface Role {
+  id: string;
+  name: string;
+}
+
+interface GalleryItem {
+  id: string;
+  title: string | null;
+  filePath: string;
 }
 
 interface UserForLinking {
@@ -30,13 +42,18 @@ interface UserForLinking {
 export function AddAssistantForm({
   generations,
   usersForLinking,
+  availableRoles,
+  galleryItems,
 }: {
   generations: Generation[];
   usersForLinking: UserForLinking[];
+  availableRoles: Role[];
+  galleryItems: GalleryItem[];
 }) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
   async function handleSubmit(formData: FormData) {
     setError(null);
@@ -69,13 +86,36 @@ export function AddAssistantForm({
           </DialogHeader>
 
           <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-1">
+            <div className="grid grid-cols-3 gap-3">
+              <div className="col-span-2 space-y-1.5">
+                <label className="text-xs font-medium text-foreground block text-left">Full Name</label>
+                <input
+                  name="fullName"
+                  required
+                  className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  placeholder="Full name"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-foreground block text-left">Initials</label>
+                <input
+                  name="initials"
+                  maxLength={3}
+                  className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-center font-mono font-bold uppercase text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  placeholder="ABC"
+                  onChange={(e) => { e.target.value = e.target.value.toUpperCase(); }}
+                />
+              </div>
+            </div>
+
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-foreground block text-left">Full Name</label>
-              <input
-                name="fullName"
-                required
-                className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                placeholder="Full name"
+              <label className="text-xs font-medium text-foreground block text-left">
+                Profile Photo
+              </label>
+              <ImagePicker
+                value={selectedPhoto}
+                onChange={setSelectedPhoto}
+                galleryItems={galleryItems}
               />
             </div>
 
@@ -175,6 +215,33 @@ export function AddAssistantForm({
                 className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder-text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                 placeholder="https://linkedin.com/in/..."
               />
+            </div>
+
+            <div className="space-y-2 border-t border-border pt-4">
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block text-left">
+                Organizational Roles
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {availableRoles.map((role) => (
+                  <label
+                    key={role.id}
+                    className="flex items-center gap-2 p-2 rounded-lg border border-border bg-muted/30 cursor-pointer hover:bg-muted transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      name="roleIds"
+                      value={role.id}
+                      className="h-4 w-4 rounded border-input accent-primary"
+                    />
+                    <span className="text-xs font-medium truncate">{role.name}</span>
+                  </label>
+                ))}
+                {availableRoles.length === 0 && (
+                  <p className="text-xs text-muted-foreground italic col-span-2">
+                    No roles created yet. Add them in Roles tab first.
+                  </p>
+                )}
+              </div>
             </div>
 
             {error && (

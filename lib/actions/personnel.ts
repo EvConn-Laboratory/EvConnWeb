@@ -43,6 +43,7 @@ const assistantProfileSchema = z.object({
   generationId: z.string().uuid("Invalid generation ID"),
   fullName: z.string().min(2, "Full name must be at least 2 characters").max(200),
   profilePhotoPath: z.string().optional().nullable(),
+  initials: z.string().max(3, "Initials must be at most 3 characters").optional().nullable().transform((v) => v?.toUpperCase() || null),
   bio: z.string().max(1000).optional().nullable(),
   githubUrl: z.string().url("Invalid GitHub URL").optional().nullable().or(z.literal("")),
   instagramUrl: z.string().url("Invalid Instagram URL").optional().nullable().or(z.literal("")),
@@ -209,6 +210,7 @@ export async function createAssistantProfileAction(
     generationId: formData.get("generationId"),
     fullName: formData.get("fullName"),
     profilePhotoPath: formData.get("profilePhotoPath") || null,
+    initials: formData.get("initials") || null,
     bio: formData.get("bio") || null,
     githubUrl: formData.get("githubUrl") || null,
     instagramUrl: formData.get("instagramUrl") || null,
@@ -246,6 +248,16 @@ export async function createAssistantProfileAction(
     .values(data)
     .returning({ id: assistantProfiles.id });
 
+  // Handle role assignments
+  const roleIds = formData.getAll("roleIds") as string[];
+  if (roleIds.length > 0) {
+    const roleValues = roleIds.map((rid) => ({
+      assistantId: created.id,
+      roleId: rid,
+    }));
+    await db.insert(assistantRoles).values(roleValues);
+  }
+
   revalidatePath("/admin/hall-of-fame/assistants");
   revalidatePath("/hall-of-fame");
   return { success: true, id: created.id };
@@ -263,6 +275,7 @@ export async function updateAssistantProfileAction(
     generationId: formData.get("generationId") || undefined,
     fullName: formData.get("fullName") || undefined,
     profilePhotoPath: formData.get("profilePhotoPath") || null,
+    initials: formData.get("initials") || null,
     bio: formData.get("bio") || null,
     githubUrl: formData.get("githubUrl") || null,
     instagramUrl: formData.get("instagramUrl") || null,
@@ -288,6 +301,20 @@ export async function updateAssistantProfileAction(
     .update(assistantProfiles)
     .set(data)
     .where(eq(assistantProfiles.id, id));
+
+  // Sync roles if provided
+  const roleIds = formData.getAll("roleIds") as string[];
+  if (roleIds.length > 0 || formData.has("roleIds")) {
+    // If 'roleIds' key exists but empty, remove all. If has values, sync them.
+    await db.delete(assistantRoles).where(eq(assistantRoles.assistantId, id));
+    if (roleIds.length > 0) {
+      const roleValues = roleIds.map((rid) => ({
+        assistantId: id,
+        roleId: rid,
+      }));
+      await db.insert(assistantRoles).values(roleValues);
+    }
+  }
 
   revalidatePath("/admin/hall-of-fame/assistants");
   revalidatePath("/hall-of-fame");

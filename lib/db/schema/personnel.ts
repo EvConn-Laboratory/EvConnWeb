@@ -27,6 +27,7 @@ export const assistantProfiles = pgTable("assistant_profiles", {
   generationId: uuid("generation_id").notNull().references(() => generations.id),
   fullName: text("full_name").notNull(),
   profilePhotoPath: text("profile_photo_path"),
+  initials: text("initials"),
   bio: text("bio"),
   githubUrl: text("github_url"),
   instagramUrl: text("instagram_url"),

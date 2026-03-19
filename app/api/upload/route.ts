@@ -8,10 +8,10 @@ export const runtime = "nodejs";
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
 
-type UploadCategory = "submissions" | "materials";
+type UploadCategory = "submissions" | "materials" | "gallery";
 
 function validateCategory(value: string | null): UploadCategory {
-  if (value === "submissions" || value === "materials") return value;
+  if (value === "submissions" || value === "materials" || value === "gallery") return value;
   return "submissions";
 }
 
@@ -21,6 +21,7 @@ function toWebPath(parts: string[]): string {
 
 const ALLOWED_TYPES: Record<UploadCategory, string[]> = {
   submissions: ["application/pdf"],
+  gallery: ["image/jpeg", "image/png", "image/gif", "image/webp"],
   materials: [
     "application/pdf",
     "application/vnd.ms-powerpoint",
@@ -46,8 +47,11 @@ export async function POST(request: Request) {
   const cat = validateCategory(formData.get("category")?.toString() ?? null);
   const maybeFile = formData.get("file");
 
-  if (cat === "materials") {
+  if (cat === "materials" || cat === "gallery") {
     const role = session.user.role;
+    if (cat === "gallery" && role !== "super_admin") {
+      return NextResponse.json({ error: "Forbidden: admin only" }, { status: 403 });
+    }
     if (role !== "super_admin" && role !== "assistant") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }

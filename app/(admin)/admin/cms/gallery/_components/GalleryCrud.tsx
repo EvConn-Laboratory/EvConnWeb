@@ -9,6 +9,7 @@ import {
 } from "@/lib/actions/cms";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { FileUpload } from "@/components/FileUpload";
 import {
   Dialog,
   DialogContent,
@@ -55,12 +56,20 @@ export function AddGalleryItemForm() {
 
           <div className="grid gap-4 py-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-foreground block text-left">File Path / URL</label>
+              <label className="text-xs font-semibold text-foreground block text-left">Upload Image / Media</label>
+              <FileUpload
+                category="gallery"
+                maxSize={10}
+                onUploadComplete={(path) => {
+                  const input = document.getElementById("gallery-path") as HTMLInputElement;
+                  if (input) input.value = path;
+                }}
+              />
               <input
+                id="gallery-path"
                 name="filePath"
                 required
-                placeholder="/images/gallery/photo.jpg"
-                className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                type="hidden"
               />
             </div>
 

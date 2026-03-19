@@ -40,18 +40,22 @@ function LinkedinIcon({ className }: { className?: string }) {
 function HexAvatar({
   src,
   name,
+  initials: providedInitials,
   isAlumni,
 }: {
   src?: string | null;
   name: string;
+  initials?: string | null;
   isAlumni: boolean;
 }) {
-  const initials = name
+  const computedInitials = name
     .split(" ")
     .slice(0, 2)
     .map((w) => w[0])
     .join("")
     .toUpperCase();
+
+  const initials = providedInitials || computedInitials;
 
   return (
     <div className="relative">
@@ -101,11 +105,23 @@ function AssistantCard({
       className="group rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/30"
     >
       <div className="flex items-start gap-4">
-        <HexAvatar src={member.profilePhotoPath} name={member.fullName} isAlumni={isAlumni} />
+        <HexAvatar
+          src={member.profilePhotoPath}
+          name={member.fullName}
+          initials={member.initials}
+          isAlumni={isAlumni}
+        />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-foreground">
-            {member.fullName}
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="truncate text-sm font-semibold text-foreground">
+              {member.fullName}
+            </p>
+            {member.initials && (
+              <span className="shrink-0 rounded bg-primary/10 px-1 py-0.5 text-[10px] font-bold text-primary">
+                {member.initials}
+              </span>
+            )}
+          </div>
           {primaryRole && (
             <p className="mt-0.5 text-xs text-primary">{primaryRole.roleName}</p>
           )}
