@@ -168,7 +168,7 @@ export default function LandingPageClient({
 
       </section>
 
-      {/* ── STATS STRIP ── */}
+      {/* ── STATS STRIP ──
       <FadeIn>
         <div className="border-y border-border bg-card">
           <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
@@ -207,7 +207,7 @@ export default function LandingPageClient({
             </div>
           </div>
         </div>
-      </FadeIn>
+      </FadeIn> */}
 
       {/* ── PROGRAMS ── */}
       <FadeIn>
